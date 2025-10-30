@@ -14,8 +14,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import whitelistManager from './whitelist-manager.mjs';
-import { ScopeTracker } from './scope-tracker.mjs';
+import whitelistManager from '../whitelist-manager.mjs';
+import { ScopeTracker } from '../scope-tracker.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
