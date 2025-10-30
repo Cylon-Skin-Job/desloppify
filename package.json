@@ -1,0 +1,32 @@
+{
+  "name": "desloppify",
+  "version": "0.1.0",
+  "description": "Universal code quality enforcement system - validates style, contracts, and bug patterns",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cylon-Skin-Job/desloppify.git"
+  },
+  "keywords": [
+    "validator",
+    "linter",
+    "code-quality",
+    "contracts",
+    "bug-patterns",
+    "cursor"
+  ],
+  "author": "RC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Cylon-Skin-Job/desloppify/issues"
+  },
+  "homepage": "https://github.com/Cylon-Skin-Job/desloppify#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
