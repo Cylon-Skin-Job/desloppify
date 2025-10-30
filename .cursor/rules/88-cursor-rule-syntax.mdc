@@ -1,0 +1,284 @@
+---
+globs: [".cursor/rules/**/*.mdc"]
+alwaysApply: false
+---
+
+# Cursor Rule Syntax
+
+**Purpose:** Guide for creating and editing Cursor rule files with correct syntax.
+
+---
+
+## ✅ Frontmatter Syntax
+
+**REQUIRED format for all `.mdc` rule files:**
+
+```yaml
+---
+globs: ["pattern1", "pattern2"]
+alwaysApply: false
+---
+```
+
+### Glob Pattern Rules
+
+**✅ CORRECT:**
+```yaml
+globs: ["**/*.html"]
+globs: ["**/*.js", "**/*.mjs"]
+globs: [".cursor/rules/**/*.mdc"]
+globs: ["css/**/*.css", "**/*.css"]
+```
+
+**❌ WRONG:**
+```yaml
+globs: *.html                    # Missing brackets and quotes
+globs:                           # Missing brackets
+  - "*.html"
+globs: ["**/*.html" "**/*.css"]  # Missing comma
+globs: ["**/*.html",  "**/*.css"] # Extra space after comma
+```
+
+**Format requirements:**
+- Must use **square brackets** `[]`
+- Each pattern in **double quotes** `""`
+- Separate patterns with **comma + single space** `, `
+- No trailing commas
+
+---
+
+## 🎯 When to Use `alwaysApply`
+
+### Use `alwaysApply: true` when:
+- ✅ Rule applies to **all file types** in the project
+- ✅ Core philosophy or project-wide standards
+- ✅ Critical patterns that must NEVER be violated
+
+**Example:** State management (ZERO TOLERANCE rule)
+```yaml
+alwaysApply: true
+```
+
+### Use `alwaysApply: false` when:
+- ✅ Rule is **file-type specific** (HTML, CSS, JS)
+- ✅ Rule is **directory specific** (scripts/, css/)
+- ✅ Rule is **context specific** (validation tools, whitelists)
+- ✅ Rule is **large** (200+ lines) and not always needed
+
+**Example:** HTML conventions
+```yaml
+globs: ["**/*.html"]
+alwaysApply: false
+```
+
+**Default:** Prefer `alwaysApply: false` with specific globs to minimize context bloat.
+
+---
+
+## 📂 Glob Pattern Examples
+
+### File Extension Patterns
+```yaml
+# Single extension
+globs: ["**/*.html"]
+
+# Multiple extensions (same type)
+globs: ["**/*.js", "**/*.mjs"]
+
+# Multiple extensions (different types)
+globs: ["**/*.html", "**/*.css", "**/*.js"]
+```
+
+### Directory Patterns
+```yaml
+# All files in a directory
+globs: ["scripts/**"]
+
+# Specific extension in directory
+globs: ["css/**/*.css"]
+
+# Multiple directories
+globs: ["js/**", "services/**", "routes/**"]
+```
+
+### Specific Files
+```yaml
+# Single specific file
+globs: ["scripts/docs-check.config.json"]
+
+# Multiple specific files
+globs: ["scripts/docs-check.config.json", "scripts/validation-whitelist.json"]
+```
+
+### Root-Level Files
+```yaml
+# Root-level file
+globs: ["index.js"]
+
+# Root-level with pattern
+globs: ["*.html"]
+```
+
+---
+
+## 📏 Rule File Naming
+
+**Convention:** `NN-description.mdc` where NN is order number
+
+```
+.cursor/rules/
+├── 00-cursor-rule-syntax.mdc    # Meta rule (this file)
+├── 01-html-conventions.mdc      # File-type specific
+├── 02-css-conventions.mdc       # File-type specific
+├── 03-javascript-conventions.mdc # File-type specific
+├── 05-whitelist-drift-tracking.mdc # Context specific
+└── 99-validator-workflow.mdc    # Tool specific
+```
+
+**Numbering guidelines:**
+- `00-09` - Meta rules and project-wide patterns
+- `10-19` - HTML/CSS/frontend
+- `20-29` - JavaScript/frontend logic
+- `30-39` - Backend/Node.js
+- `40-49` - Database/Firestore
+- `50-89` - Feature-specific rules
+- `90-99` - Tool-specific workflows
+
+---
+
+## 📝 Rule Structure Best Practices
+
+### 1. Start with Clear Philosophy
+```markdown
+# Rule Title
+
+**Core Philosophy:** One sentence explaining the "why"
+```
+
+### 2. Use Sections with Emojis
+```markdown
+## 🔵 Section Title
+## ⚠️ Important Warning
+## ✅ Checklist
+## 📋 Quick Reference
+```
+
+### 3. Show Examples
+```markdown
+### Pattern Name
+
+```javascript
+// ✅ CORRECT
+const example = "good";
+
+// ❌ WRONG
+const example = "bad";
+```
+```
+
+### 4. Include Quick Reference
+```markdown
+## 📋 Quick Reference
+
+| Concern | Rule | Example |
+|---------|------|---------|
+```
+
+### 5. End with Checklist
+```markdown
+## ✅ Before Committing
+
+- [ ] Item 1
+- [ ] Item 2
+```
+
+---
+
+## 🔄 Scoping Strategy
+
+### Goal: Minimize Always-On Context
+
+**Before (too broad):**
+```yaml
+alwaysApply: true  # 1,086 lines always loaded!
+```
+
+**After (scoped):**
+```yaml
+globs: ["**/*.html"]
+alwaysApply: false  # Only loads when editing HTML
+```
+
+### Context Savings
+
+| Strategy | Lines Always-On | Lines When Needed |
+|----------|----------------|-------------------|
+| All `alwaysApply: true` | 1,086 | 1,086 |
+| Scoped by file type | 0 | ~200-400 per file |
+
+**Savings:** 1,086 lines of unnecessary context when editing non-code files (markdown, JSON, etc.)
+
+---
+
+## 🚨 Common Mistakes
+
+### Missing Comma
+```yaml
+# ❌ WRONG
+globs: ["**/*.js" "**/*.mjs"]
+
+# ✅ CORRECT
+globs: ["**/*.js", "**/*.mjs"]
+```
+
+### Extra Space After Comma
+```yaml
+# ❌ WRONG (two spaces)
+globs: ["**/*.js",  "**/*.mjs"]
+
+# ✅ CORRECT (one space)
+globs: ["**/*.js", "**/*.mjs"]
+```
+
+### Missing Brackets
+```yaml
+# ❌ WRONG
+globs: "**/*.html"
+
+# ✅ CORRECT
+globs: ["**/*.html"]
+```
+
+### Using YAML Array Syntax
+```yaml
+# ❌ WRONG (old YAML style)
+globs:
+  - "**/*.html"
+  - "**/*.css"
+
+# ✅ CORRECT (Cursor format)
+globs: ["**/*.html", "**/*.css"]
+```
+
+---
+
+## 📚 Reference Links
+
+- **Cursor Rules Docs:** [cursor.com/docs/rules](https://cursor.com/docs/rules)
+- **Glob Pattern Guide:** MDN Web Docs (glob patterns)
+
+---
+
+## ✅ Checklist for New Rules
+
+Before committing a new `.mdc` rule file:
+
+- [ ] Frontmatter has correct syntax: `globs: ["pattern"]`
+- [ ] Uses `alwaysApply: false` unless truly needed everywhere
+- [ ] Globs are specific enough to avoid unnecessary loading
+- [ ] Rule has clear philosophy statement at top
+- [ ] Examples show ✅ CORRECT and ❌ WRONG patterns
+- [ ] Includes quick reference table
+- [ ] Includes before-commit checklist
+- [ ] File named with NN-description.mdc convention
+- [ ] Tested by editing a matching file (globs work correctly)

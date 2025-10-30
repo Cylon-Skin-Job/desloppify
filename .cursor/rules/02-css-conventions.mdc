@@ -1,0 +1,257 @@
+---
+globs: ["css/**/*.css", "**/*.css"]
+alwaysApply: false
+---
+
+# CSS Conventions
+
+**Core Philosophy:** CSS should be maintainable, predictable, and free of anti-patterns like `!important`.
+
+---
+
+## 🔵 Naming: `kebab-case` for Selectors
+
+**Rule:** ALL CSS selectors use `kebab-case`
+
+### IDs
+```css
+/* ✅ CORRECT */
+#chat-window { }
+#message-input { }
+#scroll-to-bottom-btn { }
+#audio-controller { }
+
+/* ❌ WRONG */
+#chatWindow { }        /* camelCase */
+#message_input { }     /* snake_case */
+```
+
+### Classes
+```css
+/* ✅ CORRECT */
+.message-container { }
+.typing-indicator { }
+.primary-btn { }
+.page-title { }
+
+/* ❌ WRONG */
+.messageContainer { }      /* camelCase */
+.typing_indicator { }  /* snake_case */
+```
+
+---
+
+## 🔄 Cross-File Consistency
+
+**The Chain:** HTML → CSS → JavaScript must all match
+
+### HTML
+```html
+<button id="audio-controller" class="primary-btn">Play</button>
+```
+
+### CSS (must match HTML exactly)
+```css
+#audio-controller {
+  position: fixed;
+}
+
+.primary-btn {
+  background: blue;
+}
+```
+
+### JavaScript (must match HTML exactly)
+```javascript
+const btn = document.getElementById("audio-controller");
+btn.classList.add("is-active");
+```
+
+**Why this matters:** If HTML uses `audio-controller` but CSS looks for `audioController`, styles won't apply.
+
+---
+
+## 🎨 CSS Classes vs Inline Styles
+
+### Prefer CSS Classes Over Inline Styles
+
+```javascript
+// ✅ CORRECT - Use CSS classes for static styles
+element.classList.add('is-hidden');
+element.classList.remove('is-hidden');
+element.classList.toggle('is-active');
+
+// ❌ WRONG - Inline styles for static values
+element.style.display = 'none';
+element.style.display = 'block';
+element.style.position = 'fixed';
+element.style.color = '#ffffff';
+```
+
+**Why:** CSS classes are:
+- Easier to maintain (change once in CSS, applies everywhere)
+- More performant (browser can optimize)
+- Easier to debug (visible in DevTools styles panel)
+- Reusable across elements
+
+---
+
+## 📛 Standard Class Naming
+
+Common state classes follow BEM-like conventions:
+
+| Class | Purpose | CSS |
+|-------|---------|-----|
+| `.is-hidden` | Hard hide | `display: none` |
+| `.hidden` | Soft hide | `opacity: 0; pointer-events: none` |
+| `.is-active` | Active state | (varies by component) |
+| `.is-loading` | Loading state | (varies by component) |
+| `.is-disabled` | Disabled state | (varies by component) |
+| `.is-error` | Error state | (varies by component) |
+
+### Usage Examples
+
+```javascript
+// Show/hide elements
+element.classList.add('is-hidden');      // Hard hide
+element.classList.remove('is-hidden');   // Show
+
+element.classList.add('hidden');         // Soft hide (fade out)
+element.classList.remove('hidden');      // Soft show (fade in)
+
+// State management
+button.classList.add('is-active');       // Active state
+button.classList.remove('is-active');    // Inactive state
+
+button.classList.add('is-loading');      // Show loading spinner
+button.classList.remove('is-loading');   // Hide loading spinner
+```
+
+---
+
+## 🎯 When to Use Inline Styles
+
+**Only use inline styles for dynamic values calculated at runtime:**
+
+```javascript
+// ✅ CORRECT - Dynamic values
+menu.style.top = `${mouseY}px`;
+menu.style.left = `${mouseX}px`;
+progressBar.style.width = `${percentage}%`;
+element.style.transform = `rotate(${angle}deg)`;
+
+// ❌ WRONG - Static values belong in CSS
+element.style.display = 'flex';       // Use .is-flex class
+element.style.position = 'fixed';     // Use .is-fixed class
+element.style.color = '#ffffff';      // Use .text-white class
+element.style.fontSize = '16px';      // Use .text-base class
+```
+
+**Rule of thumb:** If the value is hardcoded in JavaScript, it belongs in CSS.
+
+---
+
+## 🚫 The `!important` Rule
+
+**NEVER use `!important` declarations.**
+
+```css
+/* ❌ WRONG - !important is lazy and unreliable */
+.my-class {
+  color: red !important;
+  display: none !important;
+}
+
+/* ✅ CORRECT - Increase specificity properly */
+#main-container .my-class {
+  color: red;
+}
+
+.parent-class .my-class {
+  display: none;
+}
+```
+
+**Why avoid `!important`:**
+- Creates specificity wars
+- Makes debugging harder
+- Indicates poor CSS architecture
+- Can't be overridden except by more `!important` (cascade hell)
+
+**If you need `!important`, you probably need to:**
+1. Increase specificity correctly
+2. Reorganize your CSS structure
+3. Use more specific selectors
+
+---
+
+## 📂 CSS File Organization
+
+Organize CSS by concern, not by page:
+
+```
+css/
+├── layout.css         # Page structure (grid, flexbox, positioning)
+├── components.css     # Reusable components (buttons, cards, modals)
+├── typography.css     # Text styles, fonts, headings
+├── forms.css          # Form inputs, labels, validation
+├── utilities.css      # Helper classes (.is-hidden, .text-center, etc.)
+├── themes.css         # Color schemes, light/dark mode
+└── responsive.css     # Media queries
+```
+
+**Where to put new styles:**
+- Layout changes → `layout.css`
+- New UI component → `components.css`
+- Text styles → `typography.css`
+- Form elements → `forms.css`
+- Helper classes → `utilities.css`
+- Mobile/tablet → `responsive.css`
+
+---
+
+## 🔍 Debugging CSS
+
+### Check for Inline Styles
+
+When CSS isn't applying, check HTML for inline styles:
+
+```html
+<!-- ❌ WRONG - Inline style overrides CSS -->
+<div class="my-class" style="display: none;">
+
+<!-- ✅ CORRECT - CSS class controls visibility -->
+<div class="my-class is-hidden">
+```
+
+### Use DevTools
+
+1. **Inspect element** to see which styles are applied
+2. **Check computed styles** to see final values
+3. **Look for strikethrough** (overridden styles)
+4. **Search for `!important`** (remove it!)
+
+---
+
+## 📋 Quick Reference
+
+| Concern | Rule | Example |
+|---------|------|---------|
+| **Selectors** | `kebab-case` | `.chat-window`, `#submit-btn` |
+| **Classes vs Inline** | Prefer classes | `classList.add('is-hidden')` |
+| **Dynamic Values** | Inline styles OK | `style.top = '${y}px'` |
+| **Static Values** | CSS classes only | Use `.is-flex` not `style.display` |
+| **!important** | NEVER use | Increase specificity instead |
+| **Standard Classes** | Use conventions | `.is-hidden`, `.is-active` |
+
+---
+
+## ✅ Before Committing CSS
+
+- [ ] All selectors use `kebab-case`
+- [ ] Selectors match HTML IDs/classes exactly
+- [ ] No `!important` declarations
+- [ ] No inline styles for static values
+- [ ] Standard classes used (`.is-hidden`, `.is-active`, etc.)
+- [ ] Styles added to appropriate file (layout, components, etc.)
+- [ ] Tested in DevTools (no overridden styles)

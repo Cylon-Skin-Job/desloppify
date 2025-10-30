@@ -1,0 +1,265 @@
+---
+globs: ["**/*.js", "**/*.mjs"]
+alwaysApply: false
+---
+
+# JavaScript Naming Conventions
+
+**Core Philosophy:** Consistent naming makes code searchable and prevents bugs.
+
+---
+
+## 🟡 JavaScript: `camelCase`
+
+**Rule:** ALL JavaScript identifiers use `camelCase`
+
+### Variables
+
+```javascript
+// ✅ CORRECT
+const currentThreadId = "thread123";
+const messageContent = "Hello world";
+const audioController = document.getElementById("audio-controller");
+const userPreferences = { theme: 'dark' };
+
+// ❌ WRONG
+const current_thread_id = "thread123";   // snake_case
+const MessageContent = "hello";          // PascalCase
+const audio_controller = element;        // snake_case
+```
+
+### Functions
+
+```javascript
+// ✅ CORRECT
+function getUserId() { }
+function buildContext() { }
+function handleStreamedReply() { }
+function calculateTotal(items) { }
+
+// ❌ WRONG
+function get_user_id() { }           // snake_case
+function GetUserId() { }             // PascalCase
+function handle_streamed_reply() { } // snake_case
+```
+
+### Constants
+
+```javascript
+// ✅ CORRECT - Use SCREAMING_SNAKE_CASE for true constants
+const MAX_RETRIES = 3;
+const API_BASE_URL = 'https://api.example.com';
+const DEFAULT_TIMEOUT = 5000;
+
+// ✅ ALSO CORRECT - Use camelCase for config objects
+const apiConfig = {
+  baseUrl: 'https://api.example.com',
+  timeout: 5000,
+  maxRetries: 3
+};
+
+// ❌ WRONG
+const maxRetries = 3;           // Should be MAX_RETRIES
+const Max_Retries = 3;          // Mixed case
+```
+
+---
+
+## 🔄 Cross-File Consistency
+
+### HTML IDs → JavaScript Selectors
+
+HTML and CSS use `kebab-case`, but JavaScript uses `camelCase` for variable names:
+
+```javascript
+// ✅ CORRECT - Variable is camelCase, selector string is kebab-case
+const chatWindow = document.getElementById("chat-window");
+const messageInput = document.getElementById("message-input");
+const submitButton = document.getElementById("submit-btn");
+
+// ❌ WRONG - Variable uses kebab-case (not valid JS)
+const chat-window = document.getElementById("chat-window");  // Syntax error!
+
+// ❌ WRONG - Variable uses snake_case
+const chat_window = document.getElementById("chat-window");  // Wrong convention
+```
+
+**The Rule:** 
+- HTML/CSS: `kebab-case` (`id="chat-window"`, `#chat-window`)
+- JavaScript variable: `camelCase` (`chatWindow`)
+- JavaScript selector string: `kebab-case` (`"chat-window"`)
+
+---
+
+## 🚀 Special Pattern: `init*` Functions
+
+Functions starting with `init` are **one-time initialization functions**:
+
+### Rules for init Functions
+
+1. **Called once** during startup (from entry point)
+2. **NOT exposed** to global scope unless necessary
+3. **Idempotent** - safe to call multiple times (use remove-before-add pattern)
+
+```javascript
+// ✅ CORRECT - init function
+export function initSideDrawer() {
+  // One-time setup: wire event listeners, configure DOM
+}
+
+export function initAuthHandlers() {
+  // One-time setup: attach auth listeners
+}
+
+// ❌ WRONG - Don't name reusable functions with 'init'
+function initAudioPlayback(url) {  // This can be called many times!
+  // Should be: playAudio(url)
+}
+
+// ❌ WRONG - Don't expose init functions to global scope unnecessarily
+window.initSideDrawer = initSideDrawer;  // Only orchestrator does this
+```
+
+### When NOT to Use init*
+
+```javascript
+// ❌ WRONG - These are reusable, not init functions
+function initMessage(text) {  // Should be: createMessage()
+  return { text, timestamp: Date.now() };
+}
+
+function initPlayer(audioUrl) {  // Should be: playAudio()
+  audio.src = audioUrl;
+  audio.play();
+}
+
+// ✅ CORRECT - Reusable functions use descriptive names
+function createMessage(text) {
+  return { text, timestamp: Date.now() };
+}
+
+function playAudio(audioUrl) {
+  audio.src = audioUrl;
+  audio.play();
+}
+```
+
+---
+
+## 🎯 Common Pitfalls
+
+### Dynamic ID Creation
+
+```javascript
+// ✅ CORRECT - Create kebab-case IDs, store in camelCase var
+const buttonId = "view-mode-btn";  // camelCase variable
+div.innerHTML = `<button id="${buttonId}">Voice</button>`;  // kebab-case ID
+
+// ❌ WRONG - camelCase ID
+const buttonId = "viewModeBtn";
+div.innerHTML = `<button id="${buttonId}">Voice</button>`;  // Won't match CSS!
+```
+
+### Event Handler Naming
+
+```javascript
+// ✅ CORRECT - Handler functions use 'handle' prefix
+function handleClick() { }
+function handleSubmit() { }
+function handleKeyPress() { }
+
+// ✅ ALSO CORRECT - Specific action names
+function openDrawer() { }
+function closeDrawer() { }
+function sendMessage() { }
+
+// ❌ WRONG - Unclear naming
+function onClick() { }        // Too generic
+function click() { }          // Confusing - verb not noun
+function buttonClick() { }    // Noun-first is backwards
+```
+
+### Callback and Promise Naming
+
+```javascript
+// ✅ CORRECT - Callbacks end with 'Callback'
+function successCallback(data) { }
+function errorCallback(error) { }
+function fetchDataCallback(result) { }
+
+// ✅ CORRECT - Promise handlers use 'handle' prefix
+fetchData()
+  .then(handleSuccess)
+  .catch(handleError);
+
+// ❌ WRONG - Unclear naming
+function success(data) { }    // Too generic
+function onFetchData() { }    // Confusing - 'on' prefix for events
+```
+
+---
+
+## 📝 Comment Conventions
+
+**Rule:** Use specific keywords to signal intent in comments.
+
+### Action Items vs. Documentation
+
+```javascript
+// ✅ CORRECT - Use TODO for actionable items
+// TODO: Implement caching for API responses
+// TODO: Add error retry logic
+// FIXME: Memory leak in event listener cleanup
+// HACK: Temporary workaround until API v2 is ready
+
+// ✅ CORRECT - Use Note for documentation/explanations
+// Note: This function was moved from auth-manager.js
+// Note: TTS autoplay is handled by separate module
+// Note: API key is public and safe to commit
+
+// ❌ WRONG - Don't use Note for action items
+// Note: Need to fix the caching bug  // Should be TODO
+// Note: This is broken  // Should be FIXME
+```
+
+**Why it matters:**
+- Maintenance tools scan for `TODO`/`FIXME`/`HACK` to find actionable items
+- `Note:` is for explanatory text that documents decisions/context
+- Mixing them creates false positives in cleanup reports
+
+**Keywords:**
+- **`TODO:`** - Task to complete later
+- **`FIXME:`** - Known bug that needs fixing
+- **`HACK:`** - Temporary workaround
+- **`XXX:`** - Warning or important note
+- **`Note:`** - Documentation/explanation (not actionable)
+
+---
+
+## 📋 Quick Reference
+
+| Context | Convention | Example |
+|---------|-----------|---------|
+| **Variables** | `camelCase` | `currentThreadId`, `messageContent` |
+| **Functions** | `camelCase` | `getUserId()`, `sendMessage()` |
+| **Constants** | `SCREAMING_SNAKE_CASE` | `MAX_RETRIES`, `API_URL` |
+| **Config Objects** | `camelCase` | `apiConfig`, `userSettings` |
+| **Init Functions** | `init*` prefix | `initDrawer()`, `initAuth()` |
+| **Event Handlers** | `handle*` prefix | `handleClick()`, `handleSubmit()` |
+| **HTML IDs/Classes** | `kebab-case` | `#chat-window`, `.message-bubble` |
+| **JS Selector Strings** | `kebab-case` | `"chat-window"`, `"message-input"` |
+
+---
+
+## 🔍 Before Committing Code
+
+- [ ] All JavaScript variables use `camelCase`
+- [ ] All JavaScript functions use `camelCase`
+- [ ] Constants use `SCREAMING_SNAKE_CASE`
+- [ ] Init functions start with `init` and are not exposed unnecessarily
+- [ ] Event handlers use `handle*` prefix
+- [ ] HTML IDs in selectors use `kebab-case` strings
+- [ ] No mixed case conventions in same context
+- [ ] Function names are descriptive verbs
+- [ ] Variable names are descriptive nouns
+- [ ] Action items use `TODO:`, documentation uses `Note:`

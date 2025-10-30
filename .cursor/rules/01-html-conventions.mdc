@@ -1,0 +1,192 @@
+---
+globs: ["**/*.html"]
+alwaysApply: false
+---
+
+# HTML Conventions
+
+**Core Philosophy:** Consistent HTML structure and naming prevents bugs and makes code maintainable.
+
+---
+
+## 🔵 Naming: `kebab-case` for IDs and Classes
+
+**Rule:** ALL HTML IDs and classes use `kebab-case`
+
+### IDs
+```html
+<!-- ✅ CORRECT -->
+<div id="chat-window"></div>
+<input id="message-input" />
+<button id="scroll-to-bottom-btn"></button>
+<audio id="audio-controller"></audio>
+
+<!-- ❌ WRONG -->
+<div id="chatWindow"></div>        <!-- camelCase -->
+<input id="message_input" />       <!-- snake_case -->
+```
+
+### Classes
+```html
+<!-- ✅ CORRECT -->
+<div class="message-container"></div>
+<span class="typing-indicator"></span>
+<button class="primary-btn"></button>
+<h1 class="page-title"></h1>
+
+<!-- ❌ WRONG -->
+<div class="messageContainer"></div>   <!-- camelCase -->
+<span class="typing_indicator"></span>  <!-- snake_case -->
+```
+
+---
+
+## 🔄 Cross-File Consistency
+
+**The Chain:** HTML → CSS → JavaScript must all use matching `kebab-case` for IDs/classes
+
+### HTML
+```html
+<button id="audio-controller">Play</button>
+```
+
+### CSS (must match exactly)
+```css
+#audio-controller {
+  position: fixed;
+}
+```
+
+### JavaScript (must match exactly)
+```javascript
+const controller = document.getElementById("audio-controller");
+```
+
+**Why this matters:** If HTML uses `id="audio-controller"` but JS looks for `"audioController"`, it will fail silently.
+
+---
+
+## 🚨 Common Pitfalls
+
+### Dynamic HTML Creation
+
+When creating HTML dynamically in JavaScript, **always use kebab-case**:
+
+```javascript
+// ✅ CORRECT - Create kebab-case IDs
+div.innerHTML = `<button id="view-mode-btn">Voice</button>`;
+element.setAttribute('id', 'audio-player-btn');
+element.id = 'submit-task-btn';
+
+// ❌ WRONG - Mixed case
+div.innerHTML = `<button id="viewModeBtn">Voice</button>`;
+element.id = 'audioPlayerBtn';
+```
+
+### Template Literals
+
+Be extra careful with template literals - naming mistakes hide easily:
+
+```javascript
+// ✅ CORRECT
+const html = `
+  <div id="message-container">
+    <span class="user-name">${userName}</span>
+  </div>
+`;
+
+// ❌ WRONG - Easy to miss in multi-line strings
+const html = `
+  <div id="messageContainer">
+    <span class="userName">${userName}</span>
+  </div>
+`;
+```
+
+---
+
+## 📐 Semantic HTML
+
+Use semantic HTML5 elements when appropriate:
+
+```html
+<!-- ✅ GOOD - Semantic -->
+<nav id="main-nav">
+  <button id="home-btn">Home</button>
+</nav>
+
+<main id="content-area">
+  <article class="post-item">
+    <header class="post-header"></header>
+    <section class="post-content"></section>
+  </article>
+</main>
+
+<aside id="sidebar">
+  <section id="related-links"></section>
+</aside>
+
+<!-- ❌ LESS GOOD - Non-semantic -->
+<div id="main-nav">
+  <div id="home-btn">Home</div>
+</div>
+
+<div id="content-area">
+  <div class="post-item">
+    <div class="post-header"></div>
+    <div class="post-content"></div>
+  </div>
+</div>
+```
+
+---
+
+## ♿ Accessibility Basics
+
+### ARIA Labels
+```html
+<!-- ✅ CORRECT - Descriptive labels -->
+<button id="scroll-to-bottom-btn" aria-label="Scroll to bottom">
+  ↓
+</button>
+
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Settings">
+</div>
+
+<!-- ❌ WRONG - Missing labels on interactive elements -->
+<button id="submit-btn"></button>  <!-- No aria-label! -->
+```
+
+### Form Labels
+```html
+<!-- ✅ CORRECT - Labels linked to inputs -->
+<label for="email-input">Email</label>
+<input id="email-input" type="email" />
+
+<!-- ❌ WRONG - Unlinked label and input -->
+<label>Email</label>
+<input id="email-input" type="email" />
+```
+
+---
+
+## 📋 Quick Reference
+
+| Concern | Rule | Example |
+|---------|------|---------|
+| **IDs** | `kebab-case` | `id="chat-window"` |
+| **Classes** | `kebab-case` | `class="message-bubble"` |
+| **Dynamic IDs** | Always `kebab-case` | `element.id = "audio-btn"` |
+| **CSS Match** | Must be exact | HTML `#chat-window` = CSS `#chat-window` |
+| **JS Match** | Must be exact | HTML `#chat-window` = JS `"chat-window"` |
+
+---
+
+## ✅ Before Committing HTML
+
+- [ ] All IDs use `kebab-case`
+- [ ] All classes use `kebab-case`
+- [ ] IDs match between HTML/CSS/JS exactly
+- [ ] Interactive elements have `aria-label` attributes
+- [ ] Form inputs have linked `<label>` elements
+- [ ] Semantic HTML5 elements used where appropriate
