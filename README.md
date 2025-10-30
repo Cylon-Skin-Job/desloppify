@@ -94,6 +94,81 @@ npm run desloppify
 
 ---
 
+## 📖 Usage
+
+### Run All Core Validators
+
+```bash
+# Run core + contracts + bug patterns
+npm run desloppify
+
+# Run everything including modules (based on config)
+npm run desloppify:all
+```
+
+### Run By Category
+
+```bash
+# Core validators only (styles, IDs, colors, cursor rules)
+npm run desloppify:core
+
+# Contract enforcers only
+npm run desloppify:contracts
+
+# Bug pattern detectors only
+npm run desloppify:bugs
+```
+
+### Run Individual Validators
+
+**Core:**
+```bash
+npm run lint:styles              # No inline CSS
+npm run lint:ids                 # No duplicate IDs
+npm run validate:colors          # No hardcoded colors
+npm run validate:cursor-rules    # Cursor rule syntax
+npm run validate:responsive      # Responsive annotations
+```
+
+**Contracts:**
+```bash
+npm run enforce:return-types     # @returns annotations
+npm run enforce:nullability      # @nullable/@nonnull
+npm run enforce:async            # @async-boundary
+npm run enforce:errors           # @throws
+npm run enforce:dependencies     # @depends
+npm run enforce:state            # @mutates
+npm run enforce:side-effects     # @side-effects
+```
+
+**Bug Patterns:**
+```bash
+npm run bug:null                 # Null/undefined access
+npm run bug:memory               # Memory leaks
+npm run bug:security             # XSS, injection, secrets
+npm run bug:data                 # Data shape mismatches
+```
+
+**Modules (if enabled):**
+```bash
+# Firebase
+npm run module:firebase:scan     # Scan Firestore usage
+npm run module:firebase:schema   # Generate schema docs
+
+# Express
+npm run module:express:routes    # Generate API docs
+npm run module:express:middleware # Generate middleware docs
+
+# State Management
+npm run module:state             # Validate centralized state
+
+# TODO System
+npm run module:todo:validate     # Validate two-way contracts
+npm run module:todo:changes      # Detect uncommitted TODOs
+```
+
+---
+
 ## 📦 What's Included
 
 ```

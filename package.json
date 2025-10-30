@@ -1,11 +1,48 @@
 {
   "name": "desloppify",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Universal code quality enforcement system - validates style, contracts, and bug patterns",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    
+    "desloppify": "npm run desloppify:core && npm run desloppify:contracts && npm run desloppify:bugs",
+    "desloppify:all": "npm run desloppify && npm run desloppify:modules",
+    
+    "desloppify:core": "npm run lint:styles && npm run lint:ids && npm run validate:colors && npm run validate:cursor-rules && npm run validate:responsive",
+    "desloppify:contracts": "npm run enforce:return-types && npm run enforce:nullability && npm run enforce:async && npm run enforce:errors",
+    "desloppify:bugs": "npm run bug:null && npm run bug:memory && npm run bug:security && npm run bug:data",
+    "desloppify:modules": "echo 'Run module scripts individually based on your config'",
+    
+    "lint:styles": "node scripts/core/lint-styles.js",
+    "lint:ids": "node scripts/core/lint-duplicate-ids.mjs",
+    
+    "validate:colors": "node scripts/core/validate-hardcoded-colors.mjs",
+    "validate:cursor-rules": "node scripts/core/validate-cursor-rules.mjs",
+    "validate:cursor-references": "node scripts/core/validate-cursor-references.mjs",
+    "validate:responsive": "node scripts/core/validate-responsive-annotations.mjs",
+    
+    "enforce:return-types": "node scripts/contracts/enforce-return-types.mjs",
+    "enforce:nullability": "node scripts/contracts/enforce-nullability.mjs",
+    "enforce:async": "node scripts/contracts/enforce-async-boundaries.mjs",
+    "enforce:errors": "node scripts/contracts/enforce-error-contracts.mjs",
+    "enforce:dependencies": "node scripts/contracts/enforce-dependencies.mjs",
+    "enforce:state": "node scripts/contracts/enforce-state-mutations.mjs",
+    "enforce:side-effects": "node scripts/contracts/enforce-side-effects.mjs",
+    
+    "bug:null": "node scripts/bug-patterns/bug-pattern-null-access.mjs",
+    "bug:memory": "node scripts/bug-patterns/bug-pattern-memory-leaks.mjs",
+    "bug:security": "node scripts/bug-patterns/bug-pattern-security.mjs",
+    "bug:data": "node scripts/bug-patterns/bug-pattern-data-shape.mjs",
+    
+    "module:firebase:scan": "node scripts/modules/firebase/firebase-scan.mjs",
+    "module:firebase:schema": "node scripts/modules/firebase/generate-schema-rule.mjs",
+    "module:express:routes": "node scripts/modules/express/generate-api-routes-rule.mjs",
+    "module:express:middleware": "node scripts/modules/express/generate-middleware-rule.mjs",
+    "module:state": "node scripts/modules/state-management/validate-state-management.mjs",
+    "module:todo:validate": "node scripts/modules/todo-system/validate-todo-contract.mjs",
+    "module:todo:changes": "node scripts/modules/todo-system/detect-todo-changes.mjs"
   },
   "repository": {
     "type": "git",
