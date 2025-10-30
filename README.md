@@ -1,16 +1,20 @@
 # Desloppify
 
-**Universal code quality enforcement system**
+**Universal code quality + accumulated knowledge system**
 
-Stop writing sloppy code. Validate style, contracts, and bug patterns across any project.
+Stop writing sloppy code. Stop debugging the same issues twice. Validate style, contracts, and bug patterns while building a cross-project knowledge base that gets smarter with every bug you fix.
 
 ---
 
 ## 🎯 What Is This?
 
-Desloppify is a collection of validators, linters, and bug pattern detectors that enforce code quality standards. It's designed to be dropped into any project and immediately start catching issues.
+Desloppify is a unified system combining:
+1. **Quality Enforcement** - Validators, linters, and bug pattern detectors that catch issues automatically
+2. **Accumulated Wisdom** - A growing knowledge base of debug clues, insights, and battle-tested patterns
 
-**Philosophy:** Catch mistakes before they ship. Enforce conventions automatically. Make good code the default.
+It's designed to be dropped into any project as a single submodule and immediately start improving code quality while making all your past learnings instantly available.
+
+**Philosophy:** Catch mistakes before they ship. Learn from every bug once, not repeatedly. Enforce conventions automatically. Make good code the default.
 
 ---
 
@@ -178,11 +182,81 @@ desloppify/
 │   ├── contracts/     # Contract enforcement system
 │   ├── bug-patterns/  # Common bug detectors
 │   └── modules/       # Optional modules (firebase, express, etc.)
-├── .cursor/
-│   ├── commands/      # Cursor IDE commands
-│   └── rules/         # Universal coding conventions
+├── wisdom/            # 🆕 Accumulated knowledge base
+│   ├── debug/         # Quick-scan debugging checklists
+│   ├── insights/      # Problem-solving patterns & architecture
+│   └── patterns/      # Copy-paste ready battle-tested code
+├── cursor-rule-templates/ # Universal coding conventions
 ├── templates/         # Boilerplate for new projects
 └── desloppify.config.js
+```
+
+---
+
+## 🧠 Accumulated Wisdom
+
+**Desloppify now includes a cross-project knowledge base that gets smarter with every bug you fix.**
+
+Never debug the same thing twice. When you solve a problem in ANY project, that wisdom flows here and becomes available to ALL your projects.
+
+### [🔍 Debug Clues](wisdom/debug/README.md)
+
+**Quick-scan debugging checklists when something breaks.**
+
+Start here first. Organized by symptom (State issues? Firebase silent failures? CORS errors?). Check the relevant category, run through the checklist, get unblocked fast.
+
+**Categories:** State Management · Firebase · API/Backend · Frontend/UI · Typos · Mobile · Authentication
+
+### [💡 Insights](wisdom/insights/README.md)
+
+**Problem-solving patterns and architecture decisions that work.**
+
+The "why" behind good solutions. Higher-level patterns discovered after solving hard problems. Read these to understand principles, not just copy code.
+
+**Topics:** Problem Solving Framework · Debugging Framework · Validator Design · System Thinking · State Management · UI Patterns · Documentation · Firebase · API Design · Testing · Deployment · Mobile · Meta-Patterns
+
+### [📦 Patterns](wisdom/patterns/README.md)
+
+**Copy-paste ready code that works across projects.**
+
+Battle-tested code you can drop into any project. Includes usage examples, gotchas, and why each pattern works. No theory - just working solutions.
+
+**Categories:** Smart Parser · State Management · UI Components · Firebase · API Patterns · Mobile · Testing
+
+### The Learning Loop
+
+1. **Encounter bug** → Check debug clues
+2. **Fix it** → Learn something new
+3. **Document it** → Add to relevant wisdom category
+4. **Commit & push to desloppify** → Wisdom flows to all consuming projects
+5. **All projects benefit** → Next project knows it automatically
+
+### How to Navigate Wisdom
+
+**When debugging:**
+→ Start with `wisdom/debug/` - quick symptom-based checklist
+
+**When designing:**
+→ Read `wisdom/insights/` - understand the "why" behind patterns
+
+**When coding:**
+→ Copy from `wisdom/patterns/` - ready-to-use code
+
+### Contributing Wisdom
+
+When you learn something in a project:
+
+```bash
+cd desloppify
+# Edit the relevant file in wisdom/debug/, wisdom/insights/, or wisdom/patterns/
+git add wisdom/
+git commit -m "Add: [your learning]"
+git push
+
+# Back to your project
+cd ..
+git submodule update --remote desloppify
+git commit -am "Update desloppify with new wisdom"
 ```
 
 ---
@@ -298,11 +372,11 @@ MIT (see LICENSE file)
 
 ## 💡 Philosophy
 
-**Good code should be easy. Bad code should be hard.**
+**Good code should be easy. Bad code should be hard. Debugging the same issue twice should be impossible.**
 
-Desloppify makes quality the path of least resistance. It catches mistakes, enforces conventions, and guides you toward better patterns—all automatically.
+Desloppify makes quality the path of least resistance while turning every bug into institutional knowledge. It catches mistakes, enforces conventions, and guides you toward better patterns—all automatically. And when you DO hit a bug, you document it once and never waste time on it again.
 
-Stop debating style in PRs. Stop debugging null access. Stop shipping secrets. Let the validators do the boring work so you can focus on building.
+Stop debating style in PRs. Stop debugging null access. Stop shipping secrets. Stop Googling the same Firebase error for the third time. Let the validators catch the mistakes and let the wisdom guide you through the tough spots.
 
 ---
 
@@ -310,7 +384,7 @@ Stop debating style in PRs. Stop debugging null access. Stop shipping secrets. L
 
 Built by developers who got tired of fixing the same bugs over and over. This is the system we wish existed when we started.
 
-No jargon. No complexity. Just solid standards that make your code better.
+No jargon. No complexity. Just solid standards and accumulated knowledge that make your code better.
 
 ---
 
