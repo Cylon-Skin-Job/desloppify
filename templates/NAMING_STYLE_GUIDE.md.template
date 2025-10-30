@@ -1,0 +1,245 @@
+# Naming Style Guide
+
+> **🤖 AI Context:** This guide is automatically enforced via `.cursor/rules/` files.  
+> Cursor AI reads these rules in every conversation. For the complete AI-friendly style guide system, see `.cursor/rules/`.
+
+## 🎯 Core Philosophy
+Consistent naming makes code readable, maintainable, and reduces bugs. This guide ensures harmony between HTML, CSS, and JavaScript.
+
+---
+
+## 1. 🟡 JavaScript Variables & Functions
+**Use `camelCase` for all JavaScript identifiers**
+
+### ✅ Correct Examples:
+```javascript
+// Variables
+const currentUserId = "user123";
+const audioController = document.getElementById("audio-controller");
+const messageContent = "Hello world";
+
+// Functions
+function getUserId() { }
+function buildContext() { }
+function handleResponse() { }
+
+// Objects
+const userPreferences = {
+  theme: 'dark',
+  language: 'en',
+  notifications: true
+};
+```
+
+### ❌ Incorrect Examples:
+```javascript
+const current_user_id = "user123";   // snake_case
+const audio_controller = element;    // snake_case
+const MessageContent = "hello";      // PascalCase
+
+function get_user_id() { }           // snake_case
+function GetUserId() { }             // PascalCase
+```
+
+### Special Function Naming Patterns:
+
+#### `init*` Functions (One-Time Initialization)
+Functions starting with `init` are one-time startup functions.
+
+**Rules:**
+- Called once during startup
+- Used for wiring event listeners, DOM setup
+- Should be idempotent (safe to call multiple times)
+
+**✅ Correct Examples:**
+```javascript
+export function initApp() {
+  // One-time setup
+}
+
+export function initEventListeners() {
+  // Wire up listeners once
+}
+```
+
+**❌ Incorrect Examples:**
+```javascript
+// Don't name reusable functions with 'init'
+function initAudioPlayback(url) {  // ❌ Called multiple times!
+  // Should be: playAudio(url)
+}
+```
+
+#### Constants
+```javascript
+// ✅ CORRECT - SCREAMING_SNAKE_CASE for true constants
+const MAX_RETRIES = 3;
+const API_BASE_URL = 'https://api.example.com';
+const DEFAULT_TIMEOUT = 5000;
+
+// ✅ ALSO CORRECT - camelCase for config objects
+const apiConfig = {
+  baseUrl: 'https://api.example.com',
+  timeout: 5000
+};
+```
+
+---
+
+## 2. 🔵 CSS Classes & IDs  
+**Use `kebab-case` for all CSS selectors**
+
+### ✅ Correct Examples:
+```css
+/* IDs */
+#main-content { }
+#message-input { }
+#submit-btn { }
+#audio-controller { }
+
+/* Classes */
+.message-container { }
+.typing-indicator { }
+.primary-btn { }
+.page-title { }
+```
+
+### ❌ Incorrect Examples:
+```css
+#mainContent { }                 /* camelCase */
+#message_input { }               /* snake_case */
+
+.messageContainer { }            /* camelCase */
+.typing_indicator { }            /* snake_case */
+```
+
+### Standard State Classes:
+| Class | Purpose |
+|-------|---------|
+| `.is-hidden` | Hard hide (`display: none`) |
+| `.hidden` | Soft hide (`opacity: 0`) |
+| `.is-active` | Active state |
+| `.is-loading` | Loading state |
+| `.is-disabled` | Disabled state |
+| `.is-error` | Error state |
+
+---
+
+## 3. 🌐 HTML IDs & Classes
+**Use `kebab-case` for all HTML IDs and classes**
+
+### ✅ Correct Examples:
+```html
+<!-- IDs -->
+<div id="main-content"></div>
+<input id="message-input" />
+<button id="submit-btn"></button>
+
+<!-- Classes -->
+<div class="message-container"></div>
+<span class="typing-indicator"></span>
+<button class="primary-btn"></button>
+```
+
+### ❌ Incorrect Examples:
+```html
+<div id="mainContent"></div>        <!-- camelCase -->
+<input id="message_input" />        <!-- snake_case -->
+
+<div class="messageContainer"></div> <!-- camelCase -->
+<span class="typing_indicator"></span> <!-- snake_case -->
+```
+
+---
+
+## 4. 🔄 Cross-File Consistency
+
+**The Chain:** HTML → CSS → JavaScript must all use matching names
+
+### HTML
+```html
+<button id="audio-controller" class="primary-btn">Play</button>
+```
+
+### CSS (must match HTML exactly)
+```css
+#audio-controller {
+  position: fixed;
+}
+
+.primary-btn {
+  background: blue;
+}
+```
+
+### JavaScript (must match HTML exactly)
+```javascript
+// Variable is camelCase, selector string is kebab-case
+const audioController = document.getElementById("audio-controller");
+const btn = document.querySelector(".primary-btn");
+```
+
+**Why this matters:** If HTML uses `id="audio-controller"` but JavaScript looks for `"audioController"`, it will fail silently.
+
+---
+
+## 5. 📝 Comment Conventions
+
+**Rule:** Use specific keywords to signal intent.
+
+### Action Items
+```javascript
+// TODO: Implement caching for API responses
+// FIXME: Memory leak in event listener cleanup
+// HACK: Temporary workaround until API v2 is ready
+// XXX: Critical issue - needs immediate attention
+```
+
+### Documentation
+```javascript
+// Note: This function was moved from module X
+// Note: API key is public and safe to commit
+// Note: This is intentionally async for future use
+```
+
+**Why it matters:**
+- Maintenance tools scan for `TODO`/`FIXME`/`HACK` for actionable items
+- `Note:` is for explanatory text, not action items
+- Mixing them creates false positives in reports
+
+---
+
+## 6. 🎯 When to Use Each Convention
+
+| Context | Convention | Example |
+|---------|-----------|---------|
+| JavaScript variables | `camelCase` | `userId`, `messageContent` |
+| JavaScript functions | `camelCase` | `getUserId()`, `sendMessage()` |
+| JavaScript constants | `SCREAMING_SNAKE_CASE` | `MAX_RETRIES`, `API_URL` |
+| Init functions | `init*` prefix | `initApp()`, `initListeners()` |
+| Event handlers | `handle*` prefix | `handleClick()`, `handleSubmit()` |
+| HTML IDs | `kebab-case` | `id="main-content"` |
+| HTML classes | `kebab-case` | `class="primary-btn"` |
+| CSS selectors | `kebab-case` | `#main-content`, `.primary-btn` |
+| JS selector strings | `kebab-case` | `getElementById("main-content")` |
+
+---
+
+## ✅ Quick Checklist
+
+Before committing code:
+
+- [ ] JavaScript variables/functions use `camelCase`
+- [ ] Constants use `SCREAMING_SNAKE_CASE`
+- [ ] HTML IDs/classes use `kebab-case`
+- [ ] CSS selectors use `kebab-case`
+- [ ] Selectors match between HTML/CSS/JS exactly
+- [ ] Init functions start with `init` and aren't reusable
+- [ ] Event handlers start with `handle`
+- [ ] Action items use `TODO:`, documentation uses `Note:`
+- [ ] No mixed conventions in same context
+
+---
+
+**TL;DR:** JavaScript = camelCase. HTML/CSS = kebab-case. Constants = SCREAMING_SNAKE_CASE. Match selectors exactly across files. Use standard state classes. Keep comments categorized (TODO vs Note).
+

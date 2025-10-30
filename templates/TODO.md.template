@@ -1,0 +1,177 @@
+# TODO List
+
+**Three-tier task tracking system for {PROJECT_NAME} development.**
+
+---
+
+## 🎯 Purpose
+
+This list helps distinguish between:
+- **Ready but waiting** - Features prepared but blocked by dependencies
+- **Working but messy** - Code that functions but needs refinement
+- **Actively broken** - In-progress or half-finished work
+
+**When to reference:** If you encounter code that looks incomplete, unused, or questionable, check this list before flagging it as a problem.
+
+---
+
+## 🔌 Tier 1: Ready to Plug In
+
+**Status:** ✅ Prepared, awaiting dependencies
+
+Features that are architected and ready to implement, but waiting for other features or external dependencies.
+
+### Example Feature Name
+**File:** `path/to/file.js:123`  
+**Status:** Button/route/logic exists, needs X  
+**Blocked by:** Feature X or API Y  
+**Next:** Implement Z when X is ready
+
+---
+
+## 🔧 Tier 2: Technical Debt
+
+**Status:** ⚠️ Works, but needs improvement
+
+Code that functions correctly but could be refactored, optimized, or cleaned up.
+
+### Example Refactor Task {#example-anchor}
+**File:** `path/to/file.js:42`  
+**Status:** Works but is messy  
+**Issue:** Needs consolidation/cleanup  
+**Priority:** Low/Medium/High  
+**Next:** Refactor when touching this area next
+
+---
+
+## 🚧 Tier 3: In Progress / Broken
+
+**Status:** 🔴 Actively being developed or broken
+
+Features that are half-finished, being actively built, or not yet functional.
+
+### Example In-Progress Feature
+**File:** `path/to/file.js:99`  
+**Status:** 🔴 Stub only / Half-built  
+**Needs:** Implement core logic  
+**Priority:** High/Medium/Low  
+**Next:** Complete implementation
+
+---
+
+## 📋 Two-Way Contract System
+
+**Purpose:** Link code to TODO entries to prevent false dead-code detection.
+
+### In Code (Function Annotations)
+```javascript
+/**
+ * @todo: docs/TODO.md#example-anchor
+ */
+function unusedButPlannedFunction() {
+  // Implementation waiting for dependency
+}
+```
+
+### In TODO.md (Tier Headers)
+```markdown
+### Example Refactor Task {#example-anchor}
+**Function:** `unusedButPlannedFunction()`
+```
+
+**Validation:**
+- Run `npm run validate:todo` to check contract integrity
+- Catches broken links in both directions
+- Separates "documented TODOs" from "undocumented dead code"
+
+---
+
+## 🔍 Searching TODOs
+
+**Find by file:**
+```bash
+grep "path/to/file" docs/TODO.md
+```
+
+**Find by tier:**
+```bash
+grep "## 🔌 Tier 1" docs/TODO.md -A 20
+grep "## 🔧 Tier 2" docs/TODO.md -A 20
+grep "## 🚧 Tier 3" docs/TODO.md -A 20
+```
+
+**Find by priority:**
+```bash
+grep "Priority: High" docs/TODO.md
+```
+
+**Find by status:**
+```bash
+grep "Status: 🔴" docs/TODO.md
+grep "Blocked by:" docs/TODO.md
+```
+
+---
+
+## 💡 Best Practices
+
+### Be Specific
+
+**Good:**
+```
+### API Caching System
+**File:** `services/api-client.js:42`
+**Status:** Skeleton exists, needs Redis integration
+**Blocked by:** Redis deployment
+**Next:** Add cache check before API calls
+```
+
+**Bad:**
+```
+### Fix API stuff
+**File:** Somewhere in services
+**Status:** Not done
+**Next:** Do it later
+```
+
+### Update Regularly
+
+- Mark tasks complete when finished
+- Move items between tiers as status changes
+- Remove stale entries (completed or abandoned)
+- Add new TODOs as you discover them
+
+### Link to Code
+
+- Always include file path and line number
+- Use `{#anchor}` for cross-referencing
+- Add `@todo` annotations in code
+
+---
+
+## 🎯 When to Add a TODO
+
+**Add to Tier 1 when:**
+- Feature is designed but blocked by dependency
+- API exists but needs real implementation
+- UI exists but needs backend support
+
+**Add to Tier 2 when:**
+- Code works but is messy
+- Optimization opportunity identified
+- Refactor planned but not urgent
+
+**Add to Tier 3 when:**
+- Feature half-implemented
+- Stub exists but needs logic
+- Actively debugging/developing
+
+**Don't add when:**
+- Quick fix (just do it now)
+- Already in git issues/project board
+- External library bug (report upstream)
+
+---
+
+**TL;DR:** Three tiers (Ready, Debt, Broken) track intentional incompleteness. Use `{#anchors}` and `@todo` comments for two-way linking. Check this list before flagging "unused" code as dead. Update regularly.
+
