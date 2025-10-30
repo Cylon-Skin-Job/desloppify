@@ -1,0 +1,453 @@
+# [Project Name] System Inventory
+
+**Complete reference of implementation patterns, architectural decisions, and system wisdom**
+
+**Last Updated:** [Date]
+
+---
+
+## 📝 What This Documents
+
+This inventory captures the **HOW** and **WHY** of your project's implementation - things that aren't obvious from scanning code:
+
+- **Architectural patterns** you've chosen and why
+- **Conventions and rules** developers must follow
+- **Implementation details** that explain design decisions
+- **Phase status** of systems (complete vs in-progress)
+- **Patterns that repeat** across the codebase
+- **Philosophy and reasoning** behind technical choices
+
+**What this is NOT:**
+- Not a list of dependencies (see `package.json`)
+- Not API documentation (auto-generate that)
+- Not what files exist (file structure shows that)
+- Not what functions do (code comments show that)
+
+**This answers:** "How do we do X?" and "Why did we choose Y?"
+
+---
+
+## 🏗️ Core Architecture
+
+### 1. Module System
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Type:** [ES6 Modules | CommonJS | Mix | etc.]
+
+**Pattern:**
+```
+[Describe your module organization pattern]
+```
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Documentation:** [Link to relevant docs/rules]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 2. State Management
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Type:** [Centralized | Redux | Context | Distributed | etc.]
+
+**Pattern:**
+```
+[Describe how state is managed]
+```
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 3. Routing / Navigation
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Type:** [Client-side | Server-side | Hybrid | etc.]
+
+**Pattern:**
+```
+[Describe routing approach]
+```
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 4. Data Flow
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Pattern:**
+```
+[Describe how data flows through your application]
+Client → Server → Database → Back
+```
+
+**Key Points:**
+- [Point 1]
+- [Point 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+## 📐 Code Conventions
+
+### 5. Naming Conventions
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Rules:**
+- **Files:** [kebab-case | camelCase | etc.]
+- **Functions:** [camelCase | snake_case | etc.]
+- **Variables:** [camelCase | snake_case | etc.]
+- **Constants:** [SCREAMING_SNAKE_CASE | etc.]
+- **CSS Classes:** [kebab-case | BEM | etc.]
+- **HTML IDs:** [kebab-case | camelCase | etc.]
+- **Database Fields:** [snake_case | camelCase | etc.]
+
+**Cross-System Consistency:**
+```
+[Explain how naming flows across HTML → CSS → JS → Database]
+```
+
+**Documentation:** [Link to naming style guide]
+
+---
+
+### 6. File Organization
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Structure:**
+```
+project/
+├── [directory1]/     # [Purpose]
+├── [directory2]/     # [Purpose]
+└── [directory3]/     # [Purpose]
+```
+
+**Rules:**
+- [Rule 1: e.g., "One component per file"]
+- [Rule 2: e.g., "Tests colocated with source"]
+- [Rule 3]
+
+**Why this structure:** [Explain reasoning]
+
+---
+
+### 7. Function Patterns
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Patterns:**
+
+**Pattern 1: [Name]**
+```javascript
+// Example
+[code example]
+```
+**When to use:** [Description]
+**Rule:** [Required convention]
+
+**Pattern 2: [Name]**
+```javascript
+// Example
+[code example]
+```
+**When to use:** [Description]
+**Rule:** [Required convention]
+
+---
+
+## 🎨 Best Practices & Rules
+
+### 8. Error Handling
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Pattern:**
+```javascript
+// [Show your error handling pattern]
+```
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 9. Async Patterns
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Pattern:**
+```javascript
+// [Show async/await or Promise patterns]
+```
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 10. CSS Patterns
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Approach:** [BEM | Utility-first | CSS-in-JS | etc.]
+
+**Rules:**
+- [Rule 1: e.g., "Prefer classes over inline styles"]
+- [Rule 2: e.g., "Use CSS variables for colors"]
+- [Rule 3]
+
+**Standard Classes:**
+- `.is-hidden` - [Purpose]
+- `.is-active` - [Purpose]
+- `.is-loading` - [Purpose]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 11. Event Handling
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Pattern:**
+```javascript
+// [Show event listener pattern]
+```
+
+**Rules:**
+- [Rule 1: e.g., "Remove before add to prevent duplicates"]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+## 🗄️ Database / Storage
+
+### 12. Database Patterns
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Type:** [SQL | NoSQL | etc.]
+
+**Rules:**
+- [Rule 1: e.g., "Always use snake_case for field names"]
+- [Rule 2: e.g., "Always include timestamps"]
+- [Rule 3]
+
+**Example:**
+```javascript
+// [Show example query/schema]
+```
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 13. Caching Strategy
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Approach:** [In-memory | Redis | Browser storage | etc.]
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+## 🔧 Development Patterns
+
+### 14. Testing Strategy
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Approach:** [Unit | Integration | E2E | etc.]
+
+**Coverage Goals:**
+- **Critical paths:** [Percentage or description]
+- **Happy paths:** [Percentage or description]
+- **Edge cases:** [Percentage or description]
+
+**Rules:**
+- [Rule 1]
+- [Rule 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 15. Build Process
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Pipeline:**
+```
+[Step 1] → [Step 2] → [Step 3] → [Deploy]
+```
+
+**Key Scripts:**
+- `npm run [script]` - [Purpose]
+- `npm run [script]` - [Purpose]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+### 16. Validation / Linting
+**Status:** [✅ Complete | 🚧 In Progress | 📋 Planned]
+
+**Tools:**
+- [Tool 1]: [What it checks]
+- [Tool 2]: [What it checks]
+
+**Pre-commit Checks:**
+- [ ] [Check 1]
+- [ ] [Check 2]
+
+**Why this approach:** [Explain reasoning]
+
+---
+
+## 🧠 Wisdom & Philosophy
+
+### 17. Problem-Solving Patterns
+**Status:** [✅ Documented | 🚧 Evolving | 📋 Needed]
+
+**Key Patterns:**
+1. **[Pattern Name]:** [Brief description]
+2. **[Pattern Name]:** [Brief description]
+3. **[Pattern Name]:** [Brief description]
+
+**References:**
+- See `cursor-shared-wisdom/insights/problem-solving-framework.md`
+- See `cursor-shared-wisdom/insights/system-thinking.md`
+
+---
+
+### 18. Architectural Decisions
+**Status:** [✅ Documented | 🚧 Evolving]
+
+**Decision Log:**
+
+**Decision 1: [Title]**
+- **What:** [What was decided]
+- **Why:** [Reasoning]
+- **Trade-offs:** [What we gave up]
+- **Date:** [When decided]
+
+**Decision 2: [Title]**
+- **What:** [What was decided]
+- **Why:** [Reasoning]
+- **Trade-offs:** [What we gave up]
+- **Date:** [When decided]
+
+---
+
+### 19. Technical Debt
+**Status:** [Tracked | 🚧 Needs Review]
+
+**Known Issues:**
+1. **[Issue]:** [Description] - **Priority:** [High | Medium | Low]
+2. **[Issue]:** [Description] - **Priority:** [High | Medium | Low]
+
+**Planned Refactors:**
+1. **[Refactor]:** [Description] - **Timeline:** [When]
+2. **[Refactor]:** [Description] - **Timeline:** [When]
+
+**See also:** `docs/TODO.md` for detailed task tracking
+
+---
+
+### 20. Performance Considerations
+**Status:** [✅ Documented | 🚧 In Progress | 📋 Needed]
+
+**Key Optimizations:**
+- [Optimization 1]: [Description]
+- [Optimization 2]: [Description]
+
+**Known Bottlenecks:**
+- [Bottleneck 1]: [Impact and mitigation]
+- [Bottleneck 2]: [Impact and mitigation]
+
+---
+
+### 21. Security Patterns
+**Status:** [✅ Documented | 🚧 In Progress | 📋 Needed]
+
+**Key Security Measures:**
+- [Measure 1]: [Description]
+- [Measure 2]: [Description]
+
+**Threat Model:**
+- [Threat 1]: [Mitigation]
+- [Threat 2]: [Mitigation]
+
+---
+
+## 📋 System Status Summary
+
+### Phase Breakdown
+
+**Phase 1: Core Foundation** [✅ Complete | 🚧 In Progress | 📋 Planned]
+- [System 1]
+- [System 2]
+- [System 3]
+
+**Phase 2: Enhanced Features** [✅ Complete | 🚧 In Progress | 📋 Planned]
+- [System 1]
+- [System 2]
+- [System 3]
+
+**Phase 3: Polish & Optimization** [✅ Complete | 🚧 In Progress | 📋 Planned]
+- [System 1]
+- [System 2]
+- [System 3]
+
+---
+
+## 🔗 Related Documentation
+
+**Internal Docs:**
+- Main project context: `.cursor/rules/00-project-context.mdc`
+- Naming style guide: `docs/NAMING_STYLE_GUIDE.md`
+- TODO list: `docs/TODO.md`
+- [Other relevant docs]
+
+**Shared Wisdom:**
+- Problem-solving patterns: `cursor-shared-wisdom/insights/problem-solving-framework.md`
+- Debugging framework: `cursor-shared-wisdom/insights/debugging-framework.md`
+- Validator design: `cursor-shared-wisdom/insights/validator-design.md`
+- System thinking: `cursor-shared-wisdom/insights/system-thinking.md`
+
+---
+
+## 📝 Maintenance
+
+**Update this file when:**
+- ✅ Adding new architectural patterns
+- ✅ Changing core conventions
+- ✅ Completing system phases
+- ✅ Making significant refactors
+- ✅ Learning hard lessons
+
+**This is a living document.** Keep it updated as the project evolves.
+
+---
+
+**Last Updated:** [Date]  
+**Maintained By:** [Your Name]
+
