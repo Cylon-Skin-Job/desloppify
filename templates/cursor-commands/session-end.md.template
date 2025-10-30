@@ -455,3 +455,4 @@ ls -lt docs/sessions/
 - `{{PASSED_STATUS}}` - Status text for passed validation (e.g., `✅ Passed`)
 - `{{FAILED_STATUS}}` - Status text for failed validation (e.g., `❌ Failed`)
 - `{{PARTIAL_STATUS}}` - Status text for partial validation (e.g., `🚧 Partial`)
+

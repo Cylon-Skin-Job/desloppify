@@ -288,3 +288,4 @@ ls -la patterns/
 
 - `{{WISDOM_SUBMODULE_PATH}}` - Path to shared-wisdom submodule (e.g., `.cursor/shared-wisdom`)
 - `{{DESLOPPIFY_SUBMODULE_PATH}}` - Path to desloppify submodule (e.g., `.desloppify`)
+

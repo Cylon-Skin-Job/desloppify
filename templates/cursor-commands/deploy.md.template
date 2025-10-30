@@ -215,3 +215,4 @@ AI: Loading frontend deployment playbook...
 - `{{WEBHOOK_CONFIG}}` - Webhook configuration type (e.g., "Stripe webhooks")
 - `{{FRONTEND_DEPLOY_RULE}}` - Path to frontend deploy rule (e.g., `.cursor/rules/92-deploy-frontend.mdc`)
 - `{{BACKEND_DEPLOY_RULE}}` - Path to backend deploy rule (e.g., `.cursor/rules/91-deploy-backend.mdc`)
+

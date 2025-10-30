@@ -142,3 +142,4 @@ These commands reference existing npm scripts:
 - `../TODO.md.template` - TODO list template
 - `../NAMING_STYLE_GUIDE.md.template` - Naming conventions template
 - `../../../scripts/` - Supporting validation and generation scripts
+
