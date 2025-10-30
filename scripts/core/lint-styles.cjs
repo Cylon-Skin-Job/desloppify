@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Lint-styles: detect inline style=" attributes across the repo (excluding node_modules)
-import { spawnSync } from 'child_process';
-import { fileURLToPath } from 'url';
-import path from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const repoRoot = path.join(path.dirname(__filename), '..');
+// CommonJS fallback script for lint-styles when package.json uses "type": "module"
+const { spawnSync } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+
+const repoRoot = path.join(__dirname, '..');
 
 function runRipGrep() {
   try {
-    const res = spawnSync('rg', ['--hidden', '--glob', '!node_modules', 'style=\"'], { cwd: repoRoot });
+    const res = spawnSync('rg', ['--hidden', '--glob', '!node_modules', '--glob', '!scripts/**', 'style=\"'], { cwd: repoRoot });
     if (res.error) throw res.error;
     const out = res.stdout.toString().trim();
     return out;
@@ -18,8 +18,6 @@ function runRipGrep() {
 }
 
 function nodeScan() {
-  // Fallback: scan files for style=" pattern
-  const fs = require('fs');
   const walk = (dir, list = []) => {
     const names = fs.readdirSync(dir);
     for (const name of names) {
@@ -35,18 +33,25 @@ function nodeScan() {
   const matches = [];
   for (const f of files) {
     const txt = fs.readFileSync(f, 'utf8');
-    if (txt.includes('style="')) matches.push(f);
+    if (txt.includes('style="')) matches.push(f + ':' + (txt.match(/style="/g)||[]).length + ' occurrence(s)');
   }
   return matches.join('\n');
 }
 
 const rgOut = runRipGrep();
-let found = '';
+let foundRaw = '';
 if (rgOut === null) {
-  // ripgrep not available — fallback
-  found = nodeScan();
+  foundRaw = nodeScan();
 } else {
-  found = rgOut;
+  foundRaw = rgOut;
+}
+
+// Filter out matches that are inside the scripts folder, node_modules, or markdown files (we don't lint our scripts/docs themselves)
+let found = '';
+if (foundRaw && foundRaw.length) {
+  const lines = foundRaw.split('\n').map((l) => l.trim()).filter((l) => l.length);
+  const filtered = lines.filter((l) => !(l.includes('/scripts/') || l.includes('\\scripts\\') || l.includes('/node_modules/') || l.includes('\\node_modules\\') || l.match(/\.md:/)));
+  found = filtered.join('\n');
 }
 
 if (found && found.length) {

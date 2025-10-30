@@ -15,7 +15,7 @@
     "desloppify:bugs": "npm run bug:null && npm run bug:memory && npm run bug:security && npm run bug:data",
     "desloppify:modules": "echo 'Run module scripts individually based on your config'",
     
-    "lint:styles": "node scripts/core/lint-styles.js",
+    "lint:styles": "node scripts/core/lint-styles.cjs",
     "lint:ids": "node scripts/core/lint-duplicate-ids.mjs",
     
     "validate:colors": "node scripts/core/validate-hardcoded-colors.mjs",
