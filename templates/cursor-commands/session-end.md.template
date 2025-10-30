@@ -1,0 +1,457 @@
+# Session End
+
+**Aliases:** `/session-end`, `/end-session`, `/commit`
+
+**Purpose:** End your current coding session, capture learnings, and commit to git.
+
+---
+
+## What This Does
+
+1. **Analyze Changes** - Scan git status for modified/new/deleted files
+2. **Generate Session File** - Create session ledger entry in `docs/sessions/`
+3. **Prompt for Context** - Ask you to fill in goal, decisions, learnings
+4. **Generate Commit Message** - AI creates meaningful commit message
+5. **Stage & Commit** - Commits all changes to git (does NOT push)
+
+---
+
+## When to Use
+
+✅ **Use `/session-end` when:**
+- You're done coding for now
+- You want to commit without running maintenance
+- You want to capture context before switching tasks
+- You're deploying and want a clean commit
+
+❌ **Don't use when:**
+- You want to run full maintenance (use `/maintenance` instead)
+- You're in middle of debugging
+- Changes aren't ready to commit
+
+---
+
+## Workflow
+
+### Step 1: Generate Session Summary
+
+AI will analyze your changes and create a session file template.
+
+**What's analyzed:**
+- Files modified/added/deleted
+- Focus areas (frontend, backend, docs, scripts)
+- Current branch
+- File change categorization
+
+### Step 2: Sync Submodules & Check for Wisdom
+
+**Pull latest from submodules:**
+```bash
+cd {{WISDOM_SUBMODULE_PATH}}
+git pull
+cd ..
+
+cd {{DESLOPPIFY_SUBMODULE_PATH}}
+git pull
+cd ..
+```
+
+**Show what changed:**
+- "3 new debug clues in firebase.md"
+- "Updated smart-parser pattern"
+- "2 new validators in desloppify"
+
+**Wisdom capture prompts:**
+1. "Did you fix any bugs that took > 30 min?" → Add to debug clues
+2. "Did you create any reusable patterns?" → Add to insights/patterns
+3. "Should system inventory be updated?" → Prompt for what changed
+
+### Step 2b: Light Documentation Checks
+
+**AI scans for:**
+- Tech stack changes → Update `{{PROJECT_CONTEXT_RULE}}`
+- New architectural patterns → Update `{{SYSTEM_INVENTORY_RULE}}`
+- Deploy config changes → Update deploy playbooks
+- New features working → Update "What's Working" section
+
+**Prompts:**
+- "Did the tech stack change?" (new dependencies, tools)
+- "New conventions or patterns?" (coding standards)
+- "Deploy process changed?" (secrets, environment vars)
+- "Features now working?" (move from in-progress to working)
+
+### Step 3: Check TODO List Changes
+
+AI will scan for TODO-related changes:
+
+**Automatic detection:**
+- New TODO comments in code
+- Removed TODO comments
+- Files matching TODO.md items
+
+**AI prompts:**
+1. "Did you complete any TODO items?" → Update TODO.md
+2. "Did you add new TODOs?" → Add to appropriate tier
+3. "Should any items move between tiers?" → Update status
+
+### Step 3b: Check Roadmap/Milestone Progress
+
+AI will scan for roadmap changes:
+
+**Automatic detection:**
+- Modified roadmap files
+- In-progress milestones
+- Completed milestones
+
+**AI prompts:**
+1. "Did you complete any milestones?" → Update roadmap
+2. "Should any milestones move to 'in progress'?" → Update status
+3. "Any blockers to document?" → Add notes
+
+### Step 4: Fill In Session Context
+
+AI will prompt you for:
+
+1. **Goal** - What was your main objective?
+2. **Completed** - What features/fixes did you ship?
+3. **Decisions** - Any "why I did it this way" notes?
+4. **Attempted** - What didn't work? Why?
+5. **Learned** - Gotchas, patterns, insights?
+6. **Next** - What's unfinished or should be next?
+
+**Keep it brief:**
+- Goal: 1 sentence
+- Decisions: 2-3 max
+- Learned: Top 3 takeaways
+- Focus on WHY, not HOW
+
+### Step 5: Update TODO.md & Roadmaps (if needed)
+
+If you made changes, AI will update tracking files:
+
+**TODO.md updates:**
+- **Completed item** → Remove from list or mark done
+- **New TODO** → Add to Tier 1, 2, or 3
+- **Moved to next tier** → Update tier placement
+- **Priority change** → Update priority level
+
+**Roadmap updates:**
+- **Completed milestone** → Mark with ✅ or [x]
+- **Started work** → Mark as 🚧 or in-progress
+- **Blocked** → Mark with ⚠️ and add notes
+- **Phase complete** → Update phase status
+
+### Step 6: Review Session File
+
+AI will show you the generated session file.
+
+**Location:** `docs/sessions/YYYY-MM-DD-timeofday.md`
+
+**Contents:**
+- Timestamp and branch
+- **Maintenance status ({{NOT_VALIDATED_STATUS}})** - Run `/maintenance` before deploying!
+- Your answers from previous steps
+- Categorized file changes
+- Placeholder for commit hash
+
+**Note:** Session is marked "{{NOT_VALIDATED_STATUS}}" - run `/maintenance` before deploying!
+
+### Step 7: Generate Commit Message
+
+AI will suggest a commit message based on:
+- Your session goal
+- Features/fixes completed
+- File changes
+- TODO/roadmap updates
+- Documentation updates
+
+**Format:**
+```
+Brief summary (50 chars max)
+
+- Detailed point 1
+- Detailed point 2
+- Detailed point 3
+```
+
+You can edit before committing!
+
+### Step 8: Stage & Commit
+
+AI will:
+1. Stage all changes (`git add -A`)
+2. Commit with generated message
+3. Update session file with commit hash
+4. Confirm success
+
+**Note:** Does NOT push to remote. You control when to push!
+
+---
+
+## Example Session
+
+```
+User: /session-end
+
+AI:
+📝 Session End Ritual
+
+Analyzing changes...
+
+📊 Detected Changes:
+- 8 files modified (6 frontend, 2 backend)
+- 2 new files (docs)
+- Focus: Frontend, Documentation
+
+🔍 TODO Check:
+- Found 1 new TODO comment in js/thread-manager.js
+- You worked on js/confirmation-popup.js (Tier 1: Character modification UI)
+
+🗺️  Roadmap Check:
+- MAINTENANCE_AUTOMATION_ROADMAP.md: 100% complete ✅
+- CSS_COMPONENT_FRAMEWORK_ROADMAP.md: 3 milestones in progress
+
+Did you complete any TODO items or milestones?
+
+User: Yes, I finished the confirmation popup system
+
+AI: Great! Should I:
+- ✅ Remove "Character modification UI" from Tier 1?
+- Or keep it (popup is done but character settings not yet)?
+
+User: Keep it, popup was separate
+
+AI: Got it! ✅ Adding new TODO for keyboard shortcuts
+
+Any roadmap milestones to update?
+
+User: No, wasn't working on roadmap items
+
+AI: Perfect! ✅
+
+Quick questions to capture context:
+
+1️⃣ What was your main goal this session?
+
+User: Add confirmation popup for thread deletion
+
+AI: Got it! ✅
+
+2️⃣ What did you complete?
+
+User:
+- Confirmation popup component
+- Thread deletion with confirm
+- Updated context menu
+
+AI: Nice! ✅
+
+3️⃣ Any key decisions to document?
+
+User: Used promise-based popup instead of blocking alert
+
+AI: Perfect! ✅
+
+4️⃣ Anything you tried that didn't work?
+
+User: Tried CSS-only modal first, needed JS for proper overlay
+
+AI: Good learning! ✅
+
+5️⃣ What's next or unfinished?
+
+User: Add keyboard shortcuts (Escape to cancel)
+
+AI: Noted! ✅
+
+6️⃣ Any gotchas or patterns learned?
+
+User: Modal z-index needs to be higher than side drawer
+
+AI: Great insight! ✅
+
+---
+
+📝 Updating TODO.md:
+- Added: Keyboard shortcuts for confirmation popup (Tier 2)
+- Updated: Confirmation popup system notes
+
+📝 Updating Roadmaps:
+- No roadmap changes this session
+
+📝 Session Summary Created:
+docs/sessions/2025-10-29-evening.md
+
+Suggested commit message:
+
+"Add confirmation popup for thread deletion
+
+- Created reusable confirmation popup component
+- Integrated popup into thread deletion flow
+- Updated context menu to trigger confirmation
+- Documented promise-based popup pattern"
+
+Look good? I can commit now or you can edit first.
+
+User: Looks good, commit it
+
+AI:
+✅ Staged all changes
+✅ Committed: Add confirmation popup for thread deletion
+✅ Updated session file with commit hash
+
+📊 Session Summary:
+- Files: 10 total (8 modified, 2 new)
+- Commit: abc123f
+- Maintenance: {{NOT_VALIDATED_STATUS}} (reminder: run /maintenance before deploy)
+
+Ready to push or continue coding! 🚀
+```
+
+---
+
+## Session File Format
+
+**File:** `docs/sessions/2025-10-29-evening.md`
+
+```markdown
+# Session: 2025-10-29 (Evening)
+
+**Started:** 6:45 PM
+**Branch:** main
+**Maintenance:** {{NOT_VALIDATED_STATUS}}
+**Status:** ✅ Committed
+
+---
+
+## 🎯 Goal
+
+Add confirmation popup for thread deletion
+
+---
+
+## ✅ Completed
+
+- Confirmation popup component
+- Thread deletion with confirm
+- Updated context menu
+
+---
+
+## 💡 Key Decisions
+
+**Why promise-based popup instead of blocking alert?**
+→ Better UX, non-blocking, can be styled and positioned
+
+---
+
+## 🧪 Attempted & Abandoned
+
+- ❌ CSS-only modal → Needed JS for proper overlay and focus trap
+
+---
+
+## 📚 Learned
+
+- Modal z-index needs to be higher than side drawer
+- Promise-based popups are cleaner than callback hell
+
+---
+
+## 📋 Next Session
+
+- [ ] Add keyboard shortcuts (Escape to cancel)
+- [ ] Test on mobile
+
+---
+
+## 📊 Files Changed
+
+**Total:** 10 files (8 modified, 2 new)
+
+**Frontend:**
+- js/confirmation-popup.js
+- js/thread-manager.js
+- js/context-menus.js
+- css/popups.css
+- RavenOS.html
+
+**Documentation:**
+- docs/frontend/components.md
+
+---
+
+**Git Commit:** abc123f
+```
+
+---
+
+## Maintenance Status
+
+Session files track maintenance status:
+
+- {{NOT_VALIDATED_STATUS}} - Session committed without maintenance
+- {{PASSED_STATUS}} - Full maintenance run, all validation passed
+- {{FAILED_STATUS}} - Maintenance run but validation failed
+- {{PARTIAL_STATUS}} - Some validators passed, some failed
+
+**Why this matters:**
+
+When you run `/maintenance` later, AI can check session ledger to see which commits haven't been validated yet. No need to re-validate sessions that already passed!
+
+**Updating maintenance status:**
+
+When you run `/maintenance`, AI will:
+1. Check `docs/sessions/` for sessions marked "{{NOT_VALIDATED_STATUS}}"
+2. Run full validation
+3. Update session file with result ({{PASSED_STATUS}} or {{FAILED_STATUS}})
+4. Let you know which sessions are now validated
+
+---
+
+## Tips
+
+**Keep it brief:** Focus on WHY, not HOW. Code shows HOW.
+
+**Document decisions:** Future you (or AI) will thank you.
+
+**Mark incomplete work:** "Next Session" todos help you resume.
+
+**Search later:**
+```bash
+# Find all TTS-related sessions
+grep -r "TTS" docs/sessions/
+
+# Find sessions that failed validation
+grep -r "{{FAILED_STATUS}}" docs/sessions/
+
+# Find recent sessions
+ls -lt docs/sessions/
+```
+
+---
+
+## Related
+
+- **`/maintenance`** - Full validation and cleanup (20 min)
+- **`docs/sessions/`** - Session ledger folder
+- **`scripts/generate-session-summary.mjs`** - Session generator script
+
+---
+
+**TL;DR:** Quick way to commit with context. Generate session file → Answer prompts → Commit → Done. No maintenance required (but run it before deploy!).
+
+---
+
+## 📝 Template Placeholders
+
+**Replace these with project-specific paths:**
+
+- `{{WISDOM_SUBMODULE_PATH}}` - Path to shared-wisdom submodule (e.g., `.cursor/shared-wisdom`)
+- `{{DESLOPPIFY_SUBMODULE_PATH}}` - Path to desloppify submodule (e.g., `.desloppify`)
+- `{{PROJECT_CONTEXT_RULE}}` - Project context rule path (e.g., `.cursor/rules/00-project-context.mdc`)
+- `{{SYSTEM_INVENTORY_RULE}}` - System inventory rule path (e.g., `.cursor/rules/69-system-inventory.mdc`)
+- `{{NOT_VALIDATED_STATUS}}` - Status text for unvalidated sessions (e.g., `⚠️ Not Validated`)
+- `{{PASSED_STATUS}}` - Status text for passed validation (e.g., `✅ Passed`)
+- `{{FAILED_STATUS}}` - Status text for failed validation (e.g., `❌ Failed`)
+- `{{PARTIAL_STATUS}}` - Status text for partial validation (e.g., `🚧 Partial`)

@@ -1,0 +1,290 @@
+# Sync - Update Submodules
+
+**Aliases:** `/sync`, `/sync-submodules`
+
+**Purpose:** Pull latest from shared-wisdom and desloppify, show what's new, push local changes if any.
+
+---
+
+## What This Does
+
+1. **Pull latest** from `{{WISDOM_SUBMODULE_PATH}}` and `{{DESLOPPIFY_SUBMODULE_PATH}}`
+2. **Show what changed** (new debug clues, patterns, validators)
+3. **Check for local changes** in submodules
+4. **Prompt to push** if unpushed changes exist
+5. **Update parent repo** submodule references
+
+**Does NOT add wisdom** - that's handled by `/maintenance` and `/end-session` now.
+
+---
+
+## When to Use
+
+✅ **Use `/sync` when:**
+- Starting a new session (pull latest wisdom)
+- Want to see what other projects have added
+- Need to push local wisdom changes
+- Checking if submodules are current
+
+❌ **Don't use when:**
+- You want to add wisdom (use `/maintenance` or `/end-session`)
+- You want to run validation (use `/maintenance`)
+
+---
+
+## Workflow
+
+### Step 1: Pull Latest from Submodules
+
+```bash
+cd {{WISDOM_SUBMODULE_PATH}}
+git pull origin main
+cd ..
+
+cd {{DESLOPPIFY_SUBMODULE_PATH}}
+git pull origin main
+cd ..
+```
+
+### Step 2: Show What Changed
+
+**Parse git log to show updates:**
+
+```
+🔄 Submodule Updates
+
+📚 {{WISDOM_SUBMODULE_PATH}}:
+  ✨ 3 new commits since last sync:
+
+  1. Added Firebase auth debug clues
+     - firestore-rules-gotcha
+     - workload-identity-setup
+     - webhook-signature-verification
+
+  2. Updated smart-parser pattern
+     - Added multi-line context support
+     - Improved nested block detection
+
+  3. New debugging insight: Progressive validation
+     - Start with simple checks
+     - Layer complexity gradually
+
+🛠️  {{DESLOPPIFY_SUBMODULE_PATH}}:
+  ✨ 2 new commits since last sync:
+
+  1. Added bug pattern detector: async race conditions
+     - Detects unprotected parallel async calls
+     - Flags missing Promise.all
+
+  2. Updated responsive annotation validator
+     - Now checks for @mobile-optimized tag
+     - Validates touch target sizes
+
+📊 Summary:
+  - 5 total commits
+  - 3 new debug clues
+  - 1 updated pattern
+  - 1 new insight
+  - 2 new validators
+```
+
+### Step 3: Check for Local Changes
+
+**Check if submodules have uncommitted or unpushed changes:**
+
+```bash
+# Check {{WISDOM_SUBMODULE_PATH}}
+cd {{WISDOM_SUBMODULE_PATH}}
+git status
+git log origin/main..HEAD
+
+# Check {{DESLOPPIFY_SUBMODULE_PATH}}
+cd ../{{DESLOPPIFY_SUBMODULE_PATH}}
+git status
+git log origin/main..HEAD
+cd ..
+```
+
+**If local changes exist:**
+
+```
+⚠️  Local Changes Found
+
+📚 {{WISDOM_SUBMODULE_PATH}}:
+  🔴 1 unpushed commit:
+     - Added RavenOS TTS streaming debug clue
+
+  Should I push this to {{WISDOM_SUBMODULE_PATH}}? (yes/no)
+
+🛠️  {{DESLOPPIFY_SUBMODULE_PATH}}:
+  ✅ No local changes
+```
+
+### Step 4: Push Local Changes (if approved)
+
+**If user says yes:**
+
+```bash
+cd {{WISDOM_SUBMODULE_PATH}}
+git push origin main
+cd ..
+
+cd {{DESLOPPIFY_SUBMODULE_PATH}}
+git push origin main
+cd ..
+```
+
+```
+✅ Pushed local changes to {{WISDOM_SUBMODULE_PATH}}
+✅ Other projects can now benefit from your wisdom!
+```
+
+### Step 5: Update Parent Repo
+
+**Update submodule references in parent repo:**
+
+```bash
+git add {{WISDOM_SUBMODULE_PATH}} {{DESLOPPIFY_SUBMODULE_PATH}}
+git status
+```
+
+**Show diff:**
+
+```
+📝 Submodule References Updated
+
+  {{WISDOM_SUBMODULE_PATH}}: abc123f → def456g (3 commits ahead)
+  {{DESLOPPIFY_SUBMODULE_PATH}}: xyz789a → uvw012b (2 commits ahead)
+
+Should I commit these submodule updates? (yes/no)
+```
+
+**If user says yes:**
+
+```bash
+git commit -m "Update submodules: {{WISDOM_SUBMODULE_PATH}} + {{DESLOPPIFY_SUBMODULE_PATH}}
+
+- Pulled 3 new commits from {{WISDOM_SUBMODULE_PATH}}
+- Pulled 2 new commits from {{DESLOPPIFY_SUBMODULE_PATH}}
+- Firebase auth debug clues
+- Async race condition detector"
+```
+
+```
+✅ Submodules synced and committed
+✅ Run /maintenance or /end-session to push when ready
+```
+
+---
+
+## Example Interaction
+
+```
+User: /sync
+
+AI:
+🔄 Syncing Submodules...
+
+Pulling from {{WISDOM_SUBMODULE_PATH}}...
+✅ 3 new commits
+
+Pulling from {{DESLOPPIFY_SUBMODULE_PATH}}...
+✅ 2 new commits
+
+📚 {{WISDOM_SUBMODULE_PATH}} updates:
+  - Added: Firebase auth debug clues (3 new)
+  - Updated: smart-parser pattern (multi-line support)
+  - New insight: Progressive validation
+
+🛠️  {{DESLOPPIFY_SUBMODULE_PATH}} updates:
+  - New validator: async race condition detector
+  - Updated: responsive annotation validator
+
+⚠️  Found unpushed local changes:
+  - {{WISDOM_SUBMODULE_PATH}}: 1 commit (TTS streaming debug clue)
+
+Should I push your local wisdom changes? (yes/no)
+
+User: yes
+
+AI:
+✅ Pushed to {{WISDOM_SUBMODULE_PATH}}
+✅ Other projects can now use your TTS debug clue!
+
+📝 Should I commit submodule updates? (yes/no)
+
+User: yes
+
+AI:
+✅ Committed submodule references
+✅ Submodules synced!
+
+Summary:
+  - Pulled: 5 commits (3 wisdom, 2 desloppify)
+  - Pushed: 1 commit (your TTS clue)
+  - Ready to code with latest wisdom!
+```
+
+---
+
+## Quick Decision Tree
+
+```
+User: /sync
+
+├─ Pull from both submodules
+│  ├─ Show what's new (commits, files, features)
+│  └─ Parse commit messages for high-level summary
+│
+├─ Check for local changes
+│  ├─ Unpushed commits? → Offer to push
+│  └─ Uncommitted changes? → Warn (commit first)
+│
+├─ Update parent repo submodule refs
+│  ├─ Show diff (old hash → new hash)
+│  └─ Offer to commit
+│
+└─ Done! Ready to code with latest wisdom
+```
+
+---
+
+## Tips
+
+**Sync at start of session:** Get latest wisdom before coding
+
+**Push your wisdom:** Don't hoard debug clues - share them!
+
+**Commit submodule refs:** Keep parent repo aware of which versions you're using
+
+**Search wisdom later:**
+```bash
+# Find all Firebase-related debug clues
+cd {{WISDOM_SUBMODULE_PATH}}
+grep -r "Firebase" debug-clues/
+
+# See what patterns exist
+ls -la patterns/
+```
+
+---
+
+## Related
+
+- **`/maintenance`** - Full validation + wisdom capture
+- **`/end-session`** - Quick commit + wisdom prompts
+- **`{{WISDOM_SUBMODULE_PATH}}/`** - Debug clues, insights, patterns
+- **`{{DESLOPPIFY_SUBMODULE_PATH}}/`** - Validators, contracts, bug detectors
+
+---
+
+**TL;DR:** Pull latest from submodules, show what's new, push your local wisdom if any, update parent repo references. Pure git operations, no wisdom capture (that's maintenance/session-end's job now).
+
+---
+
+## 📝 Template Placeholders
+
+**Replace these with project-specific paths:**
+
+- `{{WISDOM_SUBMODULE_PATH}}` - Path to shared-wisdom submodule (e.g., `.cursor/shared-wisdom`)
+- `{{DESLOPPIFY_SUBMODULE_PATH}}` - Path to desloppify submodule (e.g., `.desloppify`)

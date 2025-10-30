@@ -1,0 +1,217 @@
+# Deploy Command
+
+**For AI Agents: Help developer deploy project to production/dev environment.**
+
+---
+
+## 🎯 What This Does
+
+When developer types `/deploy`, offer deployment options and guide through the deployment playbook.
+
+**Current Status:** {{DEPLOYMENT_STATUS}}
+
+---
+
+## 🚀 Execution Steps
+
+### Step 1: Check Validation Status
+
+**Before showing deploy options, check session ledger:**
+
+```bash
+# Check last session file
+ls -t docs/sessions/*.md | head -1 | xargs grep "Maintenance:"
+```
+
+**If last session shows "{{NOT_VALIDATED_STATUS}}":**
+
+```
+⚠️  Validation Status Check
+
+Your last session is marked "{{NOT_VALIDATED_STATUS}}"
+
+Last session: [most recent session file]
+Status: Committed but not validated
+
+🛡️  RECOMMENDATION: Run /maintenance before deploying
+
+Deploying unvalidated code risks:
+  - Breaking changes not caught by validators
+  - Stale documentation
+  - Outdated cursor rules
+  - Potential security issues
+
+Options:
+1️⃣ **Run /maintenance now** (recommended, ~15 min)
+2️⃣ **Deploy anyway** (not recommended, at your own risk)
+3️⃣ **Cancel**
+
+What would you like to do? (1, 2, or 3)
+```
+
+**If developer chooses option 1:** Run `/maintenance` workflow, then return to deploy
+
+**If developer chooses option 2:** Proceed with deploy (show warning again)
+
+**If developer chooses option 3:** Exit deploy workflow
+
+**If last session shows "{{PASSED_STATUS}}":**
+
+```
+✅ Validation Status: Passed
+
+Last session validated successfully!
+Ready to deploy safely.
+
+Proceeding to deployment options...
+```
+
+### Step 2: Present Options
+
+```
+# 🚀 {{PROJECT_NAME}} Deploy ({{ENVIRONMENT_STATUS}})
+
+**Current Environment:** {{ENVIRONMENT_STATUS}}
+
+Choose what to deploy:
+
+1️⃣ **Frontend ({{FRONTEND_PLATFORM}} → {{ENVIRONMENT_STATUS}})**
+   - Deploy HTML/CSS/JS to {{FRONTEND_PLATFORM}}
+   - Configure {{DATABASE_CONFIG}} rules if needed
+   - Test hosting and API proxying
+
+2️⃣ **Backend ({{BACKEND_PLATFORM}} → {{ENVIRONMENT_STATUS}})**
+   - Deploy {{BACKEND_RUNTIME}} API to {{BACKEND_SERVICE}}
+   - Configure secrets and environment variables
+   - Set up {{WEBHOOK_CONFIG}} (CRITICAL - use direct URL)
+
+3️⃣ **Both (Full Stack → {{ENVIRONMENT_STATUS}})**
+   - Deploy backend first (API must be live)
+   - Then deploy frontend (connects to API)
+   - Full end-to-end testing
+
+Which would you like to deploy? (1, 2, or 3)
+```
+
+### Step 3: Load Appropriate Playbook
+
+Based on developer's choice:
+
+**If option 1 (Frontend):**
+- Read `{{FRONTEND_DEPLOY_RULE}}`
+- Guide through {{FRONTEND_PLATFORM}} deployment
+- Run pre-deploy checks
+- Deploy to dev, then prod
+- Test and verify
+
+**If option 2 (Backend):**
+- Read `{{BACKEND_DEPLOY_RULE}}`
+- Guide through {{BACKEND_PLATFORM}} deployment
+- Verify secrets and environment variables
+- Configure {{WEBHOOK_CONFIG}} (CRITICAL)
+- Test API endpoints
+
+**If option 3 (Both):**
+- Read BOTH `{{BACKEND_DEPLOY_RULE}}` AND `{{FRONTEND_DEPLOY_RULE}}`
+- Deploy backend FIRST (API must be live before frontend)
+- Wait for backend sanity checks to pass
+- Then deploy frontend (to dev channel)
+- Full stack testing
+
+### Step 4: Guide Through Playbook ({{ENVIRONMENT_STATUS}} Environment)
+
+Follow the selected playbook step-by-step:
+
+1. **Pre-deploy checks** (MANDATORY for all deploys):
+   ```bash
+   npm run lint:styles
+   npm run docs:check
+   ```
+
+2. **Run deployment commands** (from playbook)
+
+3. **Sanity checks** (verify deployment works)
+
+4. **Common issues** (troubleshoot if needed)
+
+---
+
+## 💡 Important Notes
+
+### Always Run Pre-Deploy Checks First
+Both `npm run lint:styles` and `npm run docs:check` MUST pass before any deployment.
+
+### Backend Must Deploy Before Frontend (for "Both")
+The frontend proxies `/api` requests to {{BACKEND_PLATFORM}}, so the backend API must be live first.
+
+### {{WEBHOOK_CONFIG}} are CRITICAL
+For backend deploys, {{WEBHOOK_CONFIG}} MUST use direct {{BACKEND_PLATFORM}} URL, not {{FRONTEND_PLATFORM}} URLs. This is non-negotiable.
+
+### {{ENVIRONMENT_STATUS}} Environment Only
+Currently deploying to {{ENVIRONMENT_STATUS}} environment only.
+
+---
+
+## 🎯 Example Interaction
+
+```
+User: /deploy
+
+AI: [Checks validation status...]
+
+✅ Validation Status: Passed
+
+Last session validated successfully!
+Ready to deploy safely.
+
+Proceeding to deployment options...
+
+# 🚀 {{PROJECT_NAME}} Deploy ({{ENVIRONMENT_STATUS}})
+
+**Current Environment:** {{ENVIRONMENT_STATUS}}
+
+Choose what to deploy:
+
+1️⃣ **Frontend ({{FRONTEND_PLATFORM}} → {{ENVIRONMENT_STATUS}})**
+   - Deploy HTML/CSS/JS to {{FRONTEND_PLATFORM}}
+   - Configure {{DATABASE_CONFIG}} rules if needed
+   - Test hosting and API proxying
+
+2️⃣ **Backend ({{BACKEND_PLATFORM}} → {{ENVIRONMENT_STATUS}})**
+   - Deploy {{BACKEND_RUNTIME}} API to {{BACKEND_SERVICE}}
+   - Configure secrets and environment variables
+   - Set up {{WEBHOOK_CONFIG}} (CRITICAL - use direct URL)
+
+3️⃣ **Both (Full Stack → {{ENVIRONMENT_STATUS}})**
+   - Deploy backend first (API must be live)
+   - Then deploy frontend (connects to API)
+   - Full end-to-end testing
+
+Which would you like to deploy? (1, 2, or 3)
+
+User: 1
+
+AI: Loading frontend deployment playbook...
+
+[Guides through deployment steps]
+```
+
+---
+
+## 📝 Template Placeholders
+
+**Replace these with project-specific values:**
+
+- `{{PROJECT_NAME}}` - Name of the project (e.g., "MyApp")
+- `{{DEPLOYMENT_STATUS}}` - Current deployment status (e.g., "Pre-alpha, dev environment only")
+- `{{ENVIRONMENT_STATUS}}` - Current environment (e.g., "Dev only", "Production ready")
+- `{{NOT_VALIDATED_STATUS}}` - Status text for unvalidated sessions (e.g., "⚠️ Not Validated")
+- `{{PASSED_STATUS}}` - Status text for passed validation (e.g., "✅ Passed")
+- `{{FRONTEND_PLATFORM}}` - Frontend hosting platform (e.g., "Firebase Hosting")
+- `{{BACKEND_PLATFORM}}` - Backend hosting platform (e.g., "Cloud Run")
+- `{{BACKEND_RUNTIME}}` - Backend runtime (e.g., "Node.js")
+- `{{BACKEND_SERVICE}}` - Backend service name (e.g., "myapp-api-dev")
+- `{{DATABASE_CONFIG}}` - Database configuration type (e.g., "Firestore")
+- `{{WEBHOOK_CONFIG}}` - Webhook configuration type (e.g., "Stripe webhooks")
+- `{{FRONTEND_DEPLOY_RULE}}` - Path to frontend deploy rule (e.g., `.cursor/rules/92-deploy-frontend.mdc`)
+- `{{BACKEND_DEPLOY_RULE}}` - Path to backend deploy rule (e.g., `.cursor/rules/91-deploy-backend.mdc`)

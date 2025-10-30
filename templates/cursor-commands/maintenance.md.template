@@ -1,0 +1,356 @@
+# Maintenance & Cleanup
+
+**For AI Agents: Guide developer through codebase maintenance to keep context fresh and docs accurate.**
+
+---
+
+## 🎯 What This Does
+
+Runs through a comprehensive maintenance checklist to:
+- Auto-generate cursor rules from code (self-updating brain 🧠)
+- Validate code quality
+- Update documentation
+- Check cursor rules for accuracy
+- Clean up orphaned code
+- Keep project context fresh
+
+---
+
+## 🚀 Execution
+
+### Step 1: Load the Maintenance Rule
+
+Read `{{MAINTENANCE_RULE_PATH}}` for the complete checklist.
+
+### Step 2: Offer Maintenance Level
+
+```
+# 🧹 Project Maintenance
+
+Choose maintenance level:
+
+1️⃣ **Fast Check (5 min)**
+   - Auto-generate cursor rules
+   - Run validation checks
+   - Check git status
+   - Quick scan for issues
+
+2️⃣ **Full Maintenance (15 min)**
+   - Auto-generate cursor rules
+   - All validation checks
+   - Review session changes
+   - Update docs and cursor rules
+   - Clean up orphaned code
+   - Comprehensive health check
+
+Which level? (1 or 2)
+```
+
+### Step 3: Guide Through Checklist
+
+Follow the checklist from `{{MAINTENANCE_RULE_PATH}}`:
+
+**Fast Check:**
+1. **Sync submodules** (pull latest shared-wisdom + desloppify)
+2. Check session ledger for unvalidated sessions
+3. Run `npm run docs:check` (auto-generates rules + validates)
+4. Run `npm run validate:state`
+5. Check `git status`
+6. Report results
+7. Update session ledger with maintenance status
+
+**Full Maintenance:**
+1. **Sync submodules and check for wisdom opportunities:**
+   ```bash
+   cd {{WISDOM_SUBMODULE_PATH}}
+   git pull
+   cd ..
+
+   cd {{DESLOPPIFY_SUBMODULE_PATH}}
+   git pull
+   cd ..
+   ```
+   - Show what changed (new debug clues, patterns, validators)
+   - Ask: "Did you fix any tricky bugs worth documenting?"
+   - Ask: "Did you create any reusable patterns worth sharing?"
+   - If yes, prompt to add to shared-wisdom (debug clues, insights, patterns)
+
+2. Check session ledger for unvalidated sessions
+
+3. Run `npm run docs:check` (auto-generates cursor rules + validates)
+
+4. Run `npm run validate:state`
+
+5. Review `git diff` for what changed
+
+6. **Comprehensive cursor rule checks:**
+   - Scan ALL `{{CURSOR_RULES_PATH}}*.mdc` files for staleness
+   - Compare rule content vs current code
+   - Flag rules that reference deleted/moved files
+   - Suggest updates for outdated rules
+   - Special attention to:
+     - `{{PROJECT_CONTEXT_RULE}}` (tech stack, status, working features)
+     - `{{SYSTEM_INVENTORY_RULE}}` (new patterns, conventions)
+     - Deploy rules (if applicable)
+
+7. **Comprehensive documentation checks:**
+   - Scan ALL `docs/` files for staleness
+   - Run `npm run maintenance:stale-docs` (automated checks)
+   - Manual review for:
+     - Documentation redundancy (duplicate info across files)
+     - Outdated references to moved/deleted content
+     - Similar headings or concepts in multiple places
+     - Consolidation opportunities
+   - Priority docs to check:
+     - `docs/TODO.md` (completed items still listed?)
+     - Session files (validation status accurate?)
+     - API/backend docs (if routes changed)
+     - Frontend docs (if UI changed)
+
+8. Look for orphaned code/files
+
+9. Clean up temp files
+
+10. **Scan session for improvements (META-MAINTENANCE):**
+    - Review chat history for new patterns/checks
+    - Ask developer if we should add new maintenance tasks
+    - Update maintenance system if needed
+
+11. **Generate cleanup report** (`npm run maintenance:cleanup-report`)
+
+12. **Review cleanup suggestions and take action:**
+    - Address RED ALERT items (secrets!) immediately
+    - Consider deleting backup/temp files
+    - Review TODO comments
+    - Clean up large commented code blocks
+
+13. **Generate session summary** (`npm run maintenance:summary`)
+    - Captures what happened during this session
+    - Lists all validators run (pass/fail)
+    - Shows file changes (created/modified/deleted)
+    - Suggests next actions based on validator output
+    - Creates `.maintenance-log.md` (ephemeral, git-ignored)
+
+14. **AI-Assisted Validation** (see `docs/AI_ASSISTED_VALIDATION.md`)
+    - Run after automated checks pass
+    - AI performs subjective quality checks:
+      - Documentation completeness & consistency
+      - Code clarity & naming intuitiveness
+      - Architecture pattern adherence
+      - Error message quality
+      - Naming consistency across codebase
+      - Code redundancy detection
+      - Security & privacy context
+    - AI generates validation report with findings
+    - Address high-priority issues before proceeding
+    - **Quality gate before finalizing session**
+
+15. **Check dependency health** (`npm run maintenance:dependency-health`)
+    - Run npm audit for security vulnerabilities
+    - List outdated packages (major/minor/patch)
+    - Detect potentially unused dependencies
+    - Flag unused npm scripts
+    - Generate actionable health report
+
+16. **Update session ledger with maintenance status**
+    - Find all sessions marked "{{NOT_VALIDATED_STATUS}}" in `docs/sessions/`
+    - Update to "{{PASSED_STATUS}}" if all validation passed
+    - Update to "{{FAILED_STATUS}}" if any validation failed
+    - Update INDEX.md with new status
+
+17. **Commit all changes**
+    - Stage updated rules, docs, session files
+    - Generate commit message summarizing maintenance
+    - Commit (does NOT push)
+
+### Step 4: Report Results
+
+**If all pass:**
+```
+✅ Maintenance complete!
+   - Submodules synced (shared-wisdom + desloppify up to date)
+   - Cursor rules auto-generated from code
+   - All validation checks passed
+   - All cursor rules reviewed (no stale rules)
+   - All docs reviewed (no stale docs)
+   - No orphaned code found
+   - Dependencies healthy (0 vulnerabilities)
+   - Session ledger updated (X sessions validated)
+   - Changes committed
+
+Ready to deploy!
+```
+
+**If issues found:**
+```
+⚠️  Maintenance found X issues:
+   1. [Issue description]
+   2. [Issue description]
+
+Let's fix these:
+[Provide fixes]
+```
+
+---
+
+## 💡 Key Maintenance Areas
+
+### 1. Self-Updating Brain (Auto-Generated Rules)
+
+**The system automatically generates these cursor rules from code:**
+
+- API Routes (scans routes/)
+- Database Schema (scans backend code)
+- Middleware Usage (scans middleware/)
+
+**How it works:**
+- Every time you run `npm run docs:check`, these rules regenerate
+- AI context is always accurate without manual doc updates
+- Changes in code automatically flow to AI knowledge
+- Zero manual doc maintenance for API/schema
+
+### 2. Project Context Rule (CRITICAL - Manual Review)
+
+**File:** `{{PROJECT_CONTEXT_RULE}}`
+
+**Check if these changed:**
+- Project status (still in development? production ready?)
+- What's working vs in progress
+- Tech stack
+- Current issues
+
+**This is ALWAYS loaded** - keep it accurate!
+
+### 3. Documentation
+
+**Check these docs match current code:**
+- `{{PROJECT_CONTEXT_RULE}}` - Project status and current state
+- Deploy playbooks (if changed)
+
+**Note:** API and schema docs are now auto-generated via cursor rules!
+
+### 4. Validation Health
+
+**Automated validators (must pass):**
+- `npm run docs:check` (includes auto-generation)
+- `npm run validate:state`
+
+**AI-assisted validation (NEW):**
+- Checks subjective quality that scripts can't validate
+- Runs after automated checks pass
+- Quality gate before finalizing session
+
+### 5. Orphaned Code
+
+**Look for:**
+- Unused functions (check with docs:check "Unused exports")
+- Dead CSS (classes not used)
+- Test files left behind
+- Commented code blocks
+- TODO comments that are now done
+
+---
+
+## 🎯 When to Run Maintenance
+
+**Always run when:**
+- User types `/maintenance` or `/cleanup`
+- Before committing
+- End of coding session
+- After major feature work
+
+**Consider running when:**
+- Context feels stale
+- Multiple sessions since last check
+- After changing routes or database structure
+
+---
+
+## 📋 Quick Decision Tree
+
+```
+User: /maintenance
+
+├─ Big changes this session?
+│  ├─ Yes → Suggest Full Maintenance
+│  └─ No → Suggest Fast Check
+│
+├─ Run selected maintenance level
+│  ├─ Auto-generate cursor rules from code
+│  └─ Run validation checks
+│
+├─ Issues found?
+│  ├─ Yes → Fix each issue
+│  └─ No → Report success
+│
+└─ Ready to commit!
+```
+
+---
+
+## 🧠 Self-Updating Brain Explained
+
+**Before this system:**
+- AI reads static docs (`docs/backend/api.md`)
+- Docs get stale when code changes
+- Manual work to keep docs in sync
+
+**After this system:**
+- AI reads cursor rules auto-generated from code
+- Rules regenerate every `/maintenance` run
+- Code changes automatically update AI knowledge
+- Zero manual doc maintenance for API/schema
+
+**What's auto-generated:**
+1. API Routes - Scans all files in `routes/`
+2. Database Schema - Scans backend and frontend code
+3. Middleware Usage - Scans middleware/ + usage
+
+**Result:** My "brain" is always accurate, no manual updates needed!
+
+---
+
+## 🔄 Meta-Maintenance (Session Scan)
+
+**CRITICAL for Full Maintenance:** Scan the session to improve the maintenance system itself!
+
+### What to Look For in Chat History
+
+**Scan for keywords:** validation, check, pattern, bug, generator, script, new
+
+**Questions to answer:**
+1. Did we complete any features? (update "What's Working" in project-context)
+2. Did we add new validation scripts? (add to self-updating brain section)
+3. Did we discover new bug patterns?
+4. Did we create new file types?
+5. Did we add new directories to scan?
+6. Did we install new tools/dependencies? (update Tech Stack in project-context)
+7. Did we change route patterns?
+8. Did we add new database collections? (update Database Structure in project-context)
+
+### Template for Developer
+
+**After scanning session, present:**
+```
+🔍 Session Scan Complete
+
+✅ Updated project-context:
+- [What changed in project-context rule]
+
+I noticed these changes this session:
+1. [Change 1]: [Description + impact]
+2. [Change 2]: [Description + impact]
+
+Should we update the maintenance system?
+
+Suggestions:
+- [ ] Add validation for [new pattern]
+- [ ] Update [generator] to scan [new location]
+- [ ] Add cleanup step for [new file type]
+
+Any other maintenance improvements?
+```
+
+---
+
+**TL;DR:** Load maintenance rule, offer Fast vs Full, auto-generate rules, validate, scan session for improvements, fix issues, report when clean.
