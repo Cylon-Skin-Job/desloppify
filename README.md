@@ -98,6 +98,88 @@ npm run desloppify
 
 ---
 
+## 🔌 Importing Validators in Your Project
+
+Desloppify provides universal validators that you import into your project. Here's the pattern:
+
+### Project Structure
+
+```
+your-project/
+├── desloppify/                    # Git submodule (universal validators)
+│   └── scripts/
+│       ├── core/                  # Import these
+│       ├── contracts/             # Import these
+│       ├── bug-patterns/          # Import these
+│       └── modules/               # Import these
+├── desloppify-local/              # Project-specific scripts (NOT in git submodule)
+│   └── scripts/
+│       ├── generate-api-routes-rule.mjs    # Project-specific generator
+│       ├── generate-schema-rule.mjs        # Project-specific generator
+│       ├── validation-whitelist.json       # Project-specific exceptions
+│       └── docs-check.config.json          # Project validation config
+└── scripts/
+    └── docs-check.js              # Orchestrator (imports from desloppify + local)
+```
+
+### Import Pattern
+
+In your project's orchestrator script (e.g., `scripts/docs-check.js`):
+
+```javascript
+// Import universal validators from desloppify
+import { validateFunctionCalls } from '../desloppify/scripts/core/function-call-validator.mjs';
+import { checkNullAccess } from '../desloppify/scripts/bug-patterns/bug-pattern-null-access.mjs';
+import { enforceReturnTypes } from '../desloppify/scripts/contracts/enforce-return-types.mjs';
+
+// Import project-specific generators from desloppify-local
+import { generateApiRoutes } from '../desloppify-local/scripts/generate-api-routes-rule.mjs';
+import { generateSchema } from '../desloppify-local/scripts/generate-schema-rule.mjs';
+
+// Configure validators with project-specific paths
+const validation = validateFunctionCalls({
+  quiet: true,
+  htmlFile: path.join(PROJECT_ROOT, 'RavenOS.html')  // Your HTML entry point
+});
+```
+
+### What Goes Where?
+
+**Universal validators → `desloppify/scripts/`** (you import these)
+- Style linters
+- Contract enforcers
+- Bug pattern detectors
+- Core validation logic
+
+**Project-specific → `desloppify-local/scripts/`** (you write these)
+- Generators that scan YOUR routes/, middleware/, etc.
+- Whitelists for YOUR project exceptions
+- Config files for YOUR validation rules
+
+**Orchestrator → `your-project/scripts/`** (minimal)
+- Single docs-check.js that imports from both
+- Coordinates validation workflow
+- Passes project-specific config to validators
+
+### Configuration Options
+
+Most validators accept a config object:
+
+```javascript
+// function-call-validator
+validateFunctionCalls({
+  quiet: false,          // Show verbose output
+  htmlFile: 'index.html' // Path to HTML entry point (default: 'index.html')
+});
+
+// Other validators follow similar pattern
+enforceReturnTypes({
+  whitelistPath: '../desloppify-local/scripts/validation-whitelist.json'
+});
+```
+
+---
+
 ## 📖 Usage
 
 ### Run All Core Validators
