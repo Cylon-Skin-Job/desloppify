@@ -108,14 +108,21 @@ export default {
 ```json
 {
   "scripts": {
-    "desloppify": "node desloppify/scripts/core/run-all.js",
-    "desloppify:core": "node desloppify/scripts/core/validate-core.js",
-    "desloppify:bugs": "node desloppify/scripts/bug-patterns/detect-all.js",
-    "lint:styles": "node desloppify/scripts/core/lint-styles.js",
-    "validate:cursor-rules": "node desloppify/scripts/core/validate-cursor-rules.js"
+    "desloppify": "cd desloppify && npm run desloppify && cd ..",
+    "desloppify:core": "cd desloppify && npm run desloppify:core && cd ..",
+    "desloppify:bugs": "cd desloppify && npm run desloppify:bugs && cd ..",
+    "lint:styles": "node desloppify/scripts/core/lint-styles.cjs",
+    "validate:cursor-rules": "node desloppify/scripts/core/validate-cursor-rules.mjs"
   }
 }
 ```
+
+**What these do:**
+- `npm run desloppify` - Full suite (core + contracts + bug patterns)
+- `npm run desloppify:core` - Core validators only (styles, IDs, colors, cursor rules)
+- `npm run desloppify:bugs` - Bug pattern detectors only (null access, memory leaks, security, data shapes)
+- `npm run lint:styles` - Fast: No inline CSS check
+- `npm run validate:cursor-rules` - Fast: Cursor rule syntax validation
 
 **Note:** If you only want wisdom (no validators), skip this step entirely. The wisdom files are always accessible.
 
@@ -127,53 +134,33 @@ export default {
 
 **File:** `.cursor/commands/menu.md`
 
-Copy the menu command template from `desloppify/templates/cursor-commands/menu.md.template` to your project's `.cursor/commands/menu.md`.
-
-**Or manually create:**
-
-```markdown
-# Menu - Unified Desloppify Interface
-
-**Aliases:** `/menu`, `/m`
-
-**Purpose:** Single command interface for all maintenance, deployment, wisdom, and project management tasks.
-
----
-
-## What This Does
-
-When user types `/menu`, present this interactive menu:
-
-🛠️  Desloppify Menu
-
-1. 🔍 Full Maintenance
-   Run all validators, generate rules, capture wisdom
-
-2. 🔄 Sync Desloppify
-   Update submodule, show what's new (wisdom + validators)
-
-3. 🚀 Deploy Workflow
-   Step-by-step deployment from playbook
-
-4. 📝 End Session
-   Quick commit + session summary
-
-5. 🧠 Search Wisdom
-   Find debug clues, insights, patterns
-
-6. 📚 View Project Docs
-   Browse desloppify-local/cursor-docs/
-
-7. 📖 View Sessions
-   Read session ledger
-
-8. ⚡ Quick Status
-   Git status, submodule status, validation summary
-
-What would you like to do? (1-8)
+**Quick Setup:**
+```bash
+# Copy template to your project
+cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
 ```
 
-**See full implementation:** [menu.md command reference](https://github.com/Cylon-Skin-Job/desloppify/blob/main/templates/cursor-commands/README.md)
+**Or manually create `.cursor/commands/menu.md`** - See full template: `desloppify/templates/cursor-commands/menu.md.template`
+
+**What you get:**
+- 8 unified workflows (maintenance, deploy, sessions, wisdom, docs)
+- All maintenance tasks accessible from one command
+- No need to remember separate commands
+
+**Usage:**
+```
+User: /menu
+
+AI presents:
+1. 🔍 Full Maintenance
+2. 🔄 Sync Desloppify
+3. 🚀 Deploy Workflow
+4. 📝 End Session
+5. 🧠 Search Wisdom
+6. 📚 View Project Docs
+7. 📖 View Sessions
+8. ⚡ Quick Status
+```
 
 ### Why One Menu?
 

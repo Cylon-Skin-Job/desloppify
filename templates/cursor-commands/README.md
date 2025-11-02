@@ -1,14 +1,56 @@
 # Cursor Command Templates
 
-This directory contains templates for the 4 core Cursor commands used in streamlined project workflows.
+This directory contains templates for Cursor commands used in streamlined project workflows.
 
 ## Available Templates
 
-### Core Commands
+### Unified Interface (Recommended)
+- **`menu.md.template`** - Single command interface for all workflows (maintenance, deploy, sessions, wisdom, docs)
+
+### Individual Commands (Legacy/Optional)
 - **`maintenance.md.template`** - Full codebase maintenance and validation
 - **`session-end.md.template`** - Quick session commit with context capture
 - **`sync.md.template`** - Submodule sync and diff management
 - **`deploy.md.template`** - Deployment with validation checks
+
+**New projects should use `menu.md.template` for a unified `/menu` interface.** The individual commands are kept for backwards compatibility or if you prefer separate commands.
+
+---
+
+## Quick Start: Unified Menu (Recommended)
+
+### Setup
+```bash
+# From your project root
+mkdir -p .cursor/commands
+cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
+```
+
+### Usage
+```
+User: /menu
+
+AI presents 8 options:
+1. 🔍 Full Maintenance - Run all validators, generate rules, capture wisdom
+2. 🔄 Sync Desloppify - Update submodule, show what's new
+3. 🚀 Deploy Workflow - Step-by-step deployment from playbook
+4. 📝 End Session - Quick commit + session summary
+5. 🧠 Search Wisdom - Find debug clues, insights, patterns
+6. 📚 View Project Docs - Browse desloppify-local/cursor-docs/
+7. 📖 View Sessions - Read session ledger
+8. ⚡ Quick Status - Git status, submodule status, validation summary
+```
+
+**Why the unified menu?**
+- One command instead of 4+
+- Organized workflows (maintenance, deployment, wisdom, docs)
+- Clear separation: universal (desloppify submodule) vs project-specific (desloppify-local folder)
+- No hunting for commands
+- Consistent interface across all projects
+
+**The menu.md.template is ready to use as-is** - no placeholders to replace! Just copy and go.
+
+---
 
 ## How to Use Templates
 
