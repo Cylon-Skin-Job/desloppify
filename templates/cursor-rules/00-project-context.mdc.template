@@ -1,0 +1,232 @@
+---
+alwaysApply: true
+---
+
+# {{PROJECT_NAME}} Project Context
+
+**ALWAYS load this first - foundational project information**
+
+---
+
+## 🎯 Project Overview
+
+**Name:** {{PROJECT_NAME}}  
+**Description:** {{PROJECT_DESCRIPTION}}  
+**Vibe:** {{PROJECT_VIBE}}
+
+---
+
+## 🚀 Current Status
+
+**Stage:** {{PROJECT_STAGE}}  
+**Environment:** {{ENVIRONMENT_STATUS}}  
+**Users:** {{USER_STATUS}}  
+**Testing:** {{TESTING_STATUS}}
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+{{FRONTEND_STACK}}
+<!-- Example:
+- **React** - Component-based UI
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Build tool
+- **TailwindCSS** - Utility-first CSS
+-->
+
+### Backend
+{{BACKEND_STACK}}
+<!-- Example:
+- **Node.js + Express** - API server
+- **PostgreSQL** - Primary database
+- **Redis** - Caching layer
+- **Docker** - Containerization
+-->
+
+### Database
+{{DATABASE_STACK}}
+<!-- Example:
+- **PostgreSQL** - Primary database
+- **Schema:** See docs/backend/schema.md
+- **Naming:** `snake_case` for tables and columns
+-->
+
+### Authentication
+{{AUTH_STACK}}
+<!-- Example:
+- **JWT** - Token-based auth
+- **bcrypt** - Password hashing
+- **OAuth 2.0** - Third-party login
+-->
+
+### Hosting/Deployment
+{{HOSTING_STACK}}
+<!-- Example:
+- **Vercel** - Frontend hosting
+- **Railway** - Backend hosting
+- **GitHub Actions** - CI/CD pipeline
+-->
+
+---
+
+## 📦 What's Working
+
+{{WORKING_FEATURES}}
+<!-- Example:
+✅ **Core Features:**
+- User registration and login
+- Dashboard with analytics
+- Real-time notifications
+
+✅ **Payment:**
+- Stripe integration
+- Subscription management
+
+✅ **Deployment:**
+- Automated CI/CD
+- Staging and production environments
+-->
+
+---
+
+## 🚧 In Progress
+
+{{IN_PROGRESS_FEATURES}}
+<!-- Example:
+⚠️ **Admin Panel:**
+- User management interface
+- Analytics dashboard
+
+⚠️ **Mobile App:**
+- React Native implementation
+- Push notifications
+-->
+
+---
+
+## 📐 Architecture Patterns
+
+{{ARCHITECTURE_PATTERNS}}
+<!-- Example:
+### Module System
+- **Type:** ES6 Modules
+- **Pattern:** Feature-based folder structure
+- **Rules:**
+  - One feature per folder
+  - Index file exports public API
+  - Internal files prefixed with `_`
+
+### State Management
+- **Tool:** Redux Toolkit
+- **Pattern:** Slice-based state
+- **Rules:**
+  - No direct state mutation
+  - Async logic in thunks
+  - Selectors for derived data
+-->
+
+---
+
+## 🎨 UI/UX Philosophy
+
+{{UI_UX_PHILOSOPHY}}
+<!-- Example:
+- **Design System:** Material Design 3
+- **Responsive:** Mobile-first approach
+- **Accessibility:** WCAG 2.1 AA compliance
+- **Performance:** < 3s initial load time
+-->
+
+---
+
+## 📚 Documentation & Source of Truth
+
+{{DOCUMENTATION_STRUCTURE}}
+<!-- Example:
+**Primary Source:** `docs/` folder
+
+### Key Documentation Files
+- **Architecture:** `docs/architecture.md`
+- **API Reference:** `docs/api/README.md`
+- **Contributing:** `CONTRIBUTING.md`
+- **Changelog:** `CHANGELOG.md`
+-->
+
+---
+
+## 🔐 Secrets & Config
+
+{{SECRETS_HANDLING}}
+<!-- Example:
+### Required Secrets
+- `DATABASE_URL` - PostgreSQL connection string
+- `JWT_SECRET` - Token signing key
+- `STRIPE_SECRET_KEY` - Stripe API key
+
+### Environment Variables
+- `NODE_ENV` - Environment (development/staging/production)
+- `PORT` - Server port (default: 3000)
+- `LOG_LEVEL` - Logging verbosity
+
+### Secrets Handling Pattern
+**Local Development:**
+- Use `.env` file (git-ignored)
+- Load via `dotenv` package
+
+**Deployed:**
+- Use platform secrets management (Railway, Vercel, etc.)
+- Never commit secrets to git
+-->
+
+---
+
+## 👤 User Context
+
+{{USER_CONTEXT}}
+<!-- Example:
+**Owner/Developer:** Jane Doe  
+**Role:** Solo developer  
+**Experience Level:**
+- ✅ React (proficient)
+- ✅ Node.js (intermediate)
+- ⚠️ DevOps (learning)
+
+**Communication Style:**
+- Clear, concise explanations
+- Code examples for complex topics
+- No jargon unless defined
+-->
+
+---
+
+## 🎯 Common Questions - Quick Answers
+
+**Q: What backend are you using?**  
+A: {{BACKEND_ANSWER}}
+
+**Q: Is this multi-user?**  
+A: {{MULTIUSER_ANSWER}}
+
+**Q: What's the database?**  
+A: {{DATABASE_ANSWER}}
+
+**Q: What environment are we in?**  
+A: {{ENVIRONMENT_ANSWER}}
+
+**Q: What's working?**  
+A: {{WORKING_ANSWER}}
+
+**Q: Where's the code?**  
+A: {{CODE_STRUCTURE_ANSWER}}
+
+---
+
+**TL;DR:** {{PROJECT_TLDR}}
+
+<!-- Example:
+Early-stage SaaS product. React + TypeScript frontend, Node.js + PostgreSQL backend.
+Stripe subscriptions working, admin panel in progress. Solo dev, learning deployment.
+-->
+

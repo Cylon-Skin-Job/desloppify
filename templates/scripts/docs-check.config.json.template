@@ -1,0 +1,30 @@
+{
+  "_comment": "Configuration for docs-check.js - customize paths for your project",
+  
+  "routesDir": "routes",
+  "serverFile": "server.js",
+  "frontendJs": "index.js",
+  "htmlFiles": ["*.html"],
+  
+  "httpVerbs": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  
+  "apiDoc": "docs/backend/api.md",
+  "middlewareDoc": "docs/backend/middleware.md",
+  
+  "jsFiles": [
+    "index.js",
+    "js/**/*.js"
+  ],
+  
+  "cssFiles": [
+    "css/**/*.css"
+  ],
+  
+  "enabledModules": {
+    "express": false,
+    "firebase": false,
+    "stateManagement": false,
+    "todoSystem": false
+  }
+}
+

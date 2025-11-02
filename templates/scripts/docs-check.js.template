@@ -1,0 +1,649 @@
+// {{PROJECT_NAME}} Docs Consistency Checker
+// Generated from: desloppify/templates/scripts/docs-check.js.template
+// Run: node scripts/docs-check.js
+// Or via npm script: npm run docs:check
+
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ============================================================================
+// UNIVERSAL VALIDATORS (from desloppify submodule)
+// ============================================================================
+
+// Core validators - always imported
+import { validateFunctionCalls } from '../desloppify/scripts/core/function-call-validator.mjs';
+
+// Bug pattern detectors - always imported
+import { 
+  checkNullAccess, 
+  generateReport as generateNullReport,
+  detectFrameworksNeedingPrompt,
+  detectExpressUsage,
+  getAffectedFiles 
+} from '../desloppify/scripts/bug-patterns/bug-pattern-null-access.mjs';
+import { checkDataShapes, generateReport as generateDataShapeReport } from '../desloppify/scripts/bug-patterns/bug-pattern-data-shape.mjs';
+import checkSecurityRisks from '../desloppify/scripts/bug-patterns/bug-pattern-security.mjs';
+import { checkMemoryLeaks } from '../desloppify/scripts/bug-patterns/bug-pattern-memory-leaks.mjs';
+
+// Contract enforcers - always imported
+import { checkReturnTypes, generateReturnTypesReport } from '../desloppify/scripts/contracts/enforce-return-types.mjs';
+import { checkErrorContracts, generateErrorContractsReport } from '../desloppify/scripts/contracts/enforce-error-contracts.mjs';
+import { checkNullability, generateNullabilityReport } from '../desloppify/scripts/contracts/enforce-nullability.mjs';
+import { checkAsyncBoundaries, generateAsyncBoundariesReport } from '../desloppify/scripts/contracts/enforce-async-boundaries.mjs';
+import { checkDependencies, generateDependenciesReport } from '../desloppify/scripts/contracts/enforce-dependencies.mjs';
+import { checkStateMutations, generateStateMutationsReport } from '../desloppify/scripts/contracts/enforce-state-mutations.mjs';
+import { checkSideEffects, generateSideEffectsReport } from '../desloppify/scripts/contracts/enforce-side-effects.mjs';
+
+// Whitelist manager
+import whitelistManager from '../desloppify/scripts/whitelist-manager.mjs';
+
+// ============================================================================
+// PROJECT-SPECIFIC GENERATORS (from desloppify-local)
+// ============================================================================
+// These auto-generate cursor rules based on your codebase
+
+// {{GENERATOR_IMPORTS}}
+// Example:
+// import { generateAPIRoutes } from '../desloppify-local/scripts/generate-api-routes-rule.mjs';
+// import { generateFirebaseSchema } from '../desloppify-local/scripts/generate-schema-rule.mjs';
+// import { generateMiddleware } from '../desloppify-local/scripts/generate-middleware-rule.mjs';
+
+// ============================================================================
+// PROJECT-SPECIFIC VALIDATORS (from desloppify-local)
+// ============================================================================
+
+// {{VALIDATOR_IMPORTS}}
+// Example:
+// import { validateTodoContracts } from '../desloppify-local/scripts/validate-todo-contract.mjs';
+// import { validateStateManagement } from '../desloppify-local/scripts/validate-state-management.mjs';
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.join(__dirname, '..');
+
+// Load project-specific config
+async function loadConfig() {
+  const cfgPath = path.join(repoRoot, 'desloppify-local', 'scripts', 'docs-check.config.json');
+  try {
+    const raw = await fs.readFile(cfgPath, 'utf8');
+    return JSON.parse(raw);
+  } catch (err) {
+    // Return defaults if config doesn't exist
+    return {
+      routesDir: 'routes',
+      serverFile: 'server.js',
+      frontendJs: 'index.js',
+      htmlFiles: ['*.html']
+    };
+  }
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+function ok(msg) {
+  console.log(`✔️  ${msg}`);
+}
+
+function warn(msg) {
+  console.warn(`⚠️  ${msg}`);
+}
+
+function fail(msg) {
+  console.error(`❌ ${msg}`);
+}
+
+async function exists(file) {
+  try {
+    await fs.access(file);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ============================================================================
+// PRE-FLIGHT CHECK: Detect Interactive Code
+// ============================================================================
+// CRITICAL: Validators must run non-interactively for CI/CD compatibility
+// Interactive prompts (readline, stdin) will hang automated environments
+
+async function checkForInteractiveCode() {
+  const results = { passed: true, messages: [], violations: [] };
+  
+  // Patterns that indicate interactive code
+  const bannedPatterns = [
+    {
+      pattern: /readline\.createInterface/g,
+      name: 'readline.createInterface',
+      severity: 'CRITICAL'
+    },
+    {
+      pattern: /process\.stdin\./g,
+      name: 'process.stdin access',
+      severity: 'CRITICAL'
+    },
+    {
+      pattern: /prompt\(['"]/g,
+      name: 'prompt() call',
+      severity: 'CRITICAL'
+    },
+    {
+      pattern: /confirm\(['"]/g,
+      name: 'confirm() call',
+      severity: 'HIGH'
+    }
+  ];
+  
+  // Scan all validator files
+  const validatorFiles = [
+    path.join(repoRoot, 'scripts', 'docs-check.js'),
+    path.join(repoRoot, 'desloppify', 'scripts', 'core', 'function-call-validator.mjs'),
+    // Add more validator paths as needed
+  ];
+  
+  for (const file of validatorFiles) {
+    if (!await exists(file)) {
+      continue;
+    }
+    
+    const content = await fs.readFile(file, 'utf8');
+    
+    for (const { pattern, name, severity } of bannedPatterns) {
+      const matches = content.matchAll(pattern);
+      const matchArray = [...matches];
+      
+      if (matchArray.length > 0) {
+        const lines = content.split('\n');
+        const violations = [];
+        
+        for (const match of matchArray) {
+          const beforeMatch = content.substring(0, match.index);
+          const lineNum = beforeMatch.split('\n').length;
+          const lineContent = lines[lineNum - 1].trim();
+          
+          // Skip if in a comment, meta-code, or documentation
+          if (
+            lineContent.startsWith('//') ||
+            lineContent.startsWith('*') ||
+            lineContent.startsWith('/*') ||
+            lineContent.includes('pattern:') ||
+            lineContent.includes('DON\'T:') ||
+            lineContent.includes('NEVER DO THIS')
+          ) {
+            continue;
+          }
+          
+          violations.push({ line: lineNum, content: lineContent });
+        }
+        
+        if (violations.length > 0) {
+          results.passed = false;
+          results.violations.push({
+            file,
+            pattern: name,
+            severity,
+            count: violations.length,
+            locations: violations
+          });
+        }
+      }
+    }
+  }
+  
+  if (!results.passed) {
+    results.messages.push('');
+    results.messages.push('━'.repeat(80));
+    results.messages.push('🚨 INTERACTIVE CODE DETECTED - VALIDATION ABORTED');
+    results.messages.push('━'.repeat(80));
+    results.messages.push('');
+    results.messages.push('Validators must run non-interactively for CI/CD compatibility.');
+    results.messages.push('');
+    
+    for (const violation of results.violations) {
+      results.messages.push(`❌ ${violation.file}`);
+      results.messages.push(`   Pattern: ${violation.pattern} (${violation.severity})`);
+      results.messages.push(`   Found ${violation.count} violation(s):`);
+      
+      for (const loc of violation.locations.slice(0, 3)) {
+        results.messages.push(`   - Line ${loc.line}: ${loc.content}`);
+      }
+      
+      if (violation.locations.length > 3) {
+        results.messages.push(`   ... and ${violation.locations.length - 3} more`);
+      }
+      
+      results.messages.push('');
+    }
+    
+    results.messages.push('Fix: Remove interactive code. Use auto-flagging with JSON whitelist pattern.');
+    results.messages.push('');
+    results.messages.push('━'.repeat(80));
+  }
+  
+  return results;
+}
+
+// ============================================================================
+// UNIVERSAL VALIDATORS (Wrappers)
+// ============================================================================
+// These wrap desloppify validators for consistent reporting
+
+async function checkFunctionCalls() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const htmlFile = path.join(repoRoot, '{{HTML_FILE}}'); // e.g., 'RavenOS.html'
+    const issues = await validateFunctionCalls({
+      projectRoot: repoRoot,
+      htmlFile: await exists(htmlFile) ? htmlFile : null,
+      quiet: true
+    });
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      results.messages = issues;
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Function call validation error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkNullUndefinedAccess() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+      // Example: path.join(repoRoot, 'index.js'),
+    ];
+    
+    const issues = await checkNullAccess(jsFiles, {
+      frameworkDetection: null, // Auto-flag frameworks instead of prompting
+      quiet: true
+    });
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateNullReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Null access check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkDataShapeValidation() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkDataShapes(jsFiles, { quiet: true });
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateDataShapeReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Data shape check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkSecurityValidation() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkSecurityRisks(jsFiles, { quiet: true });
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      results.messages = issues;
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Security check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkMemoryLeakRisks() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkMemoryLeaks(jsFiles, { quiet: true });
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      results.messages = issues;
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Memory leak check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+// Contract enforcers
+async function checkReturnTypeAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkReturnTypes(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateReturnTypesReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Return type check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkErrorContractAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkErrorContracts(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateErrorContractsReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Error contract check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkNullabilityAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkNullability(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateNullabilityReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Nullability check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkAsyncBoundaryAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkAsyncBoundaries(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateAsyncBoundariesReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Async boundary check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkDependencyAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkDependencies(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateDependenciesReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Dependency check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkStateMutationAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkStateMutations(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateStateMutationsReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`State mutation check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+async function checkSideEffectsAnnotations() {
+  const results = { passed: true, messages: [] };
+  
+  try {
+    const jsFiles = [
+      // {{JS_FILES}}
+    ];
+    
+    const issues = await checkSideEffects(jsFiles);
+    
+    if (issues.length > 0) {
+      results.passed = false;
+      const report = generateSideEffectsReport(issues);
+      results.messages.push(report);
+    }
+  } catch (err) {
+    results.passed = false;
+    results.messages.push(`Side effects check error: ${err.message}`);
+  }
+  
+  return results;
+}
+
+// ============================================================================
+// PROJECT-SPECIFIC VALIDATORS (Placeholders)
+// ============================================================================
+// Add your custom validators here
+
+// {{PROJECT_VALIDATORS}}
+// Example:
+// async function checkTodoContracts() {
+//   const results = { passed: true, messages: [] };
+//   // Your validation logic
+//   return results;
+// }
+
+// ============================================================================
+// MAIN ORCHESTRATOR
+// ============================================================================
+
+async function main() {
+  console.log('🔎 {{PROJECT_NAME}} Docs Check\n');
+  
+  // PRE-FLIGHT: Check for interactive code BEFORE running any validators
+  const preFlight = await checkForInteractiveCode();
+  if (!preFlight.passed) {
+    preFlight.messages.forEach(msg => console.log(msg));
+    process.exit(1);
+  }
+  
+  console.log('✅ Pre-flight: No interactive code detected\n');
+  
+  // Define validation pipeline
+  const checks = [
+    // Universal validators (always run)
+    ['Function calls validation', checkFunctionCalls],
+    ['Null/undefined access', checkNullUndefinedAccess],
+    ['Data shape validation', checkDataShapeValidation],
+    ['Security risks', checkSecurityValidation],
+    ['Memory leak risks', checkMemoryLeakRisks],
+    ['Return type annotations', checkReturnTypeAnnotations],
+    ['Error contract annotations', checkErrorContractAnnotations],
+    ['Nullability annotations', checkNullabilityAnnotations],
+    ['Async boundary annotations', checkAsyncBoundaryAnnotations],
+    ['Side effects annotations', checkSideEffectsAnnotations],
+    ['State mutation annotations', checkStateMutationAnnotations],
+    ['Dependency annotations', checkDependencyAnnotations],
+    
+    // Project-specific validators
+    // {{PROJECT_CHECKS}}
+    // Example: ['TODO contract validation', checkTodoContracts],
+  ];
+  
+  let allPassed = true;
+  const completionTracker = [];
+  
+  // Run all checks with tracking
+  for (const [name, fn] of checks) {
+    const startTime = Date.now();
+    let status = 'COMPLETED';
+    let duration = 0;
+    
+    try {
+      const res = await fn();
+      duration = Date.now() - startTime;
+      
+      if (!res.passed) {
+        allPassed = false;
+        status = 'FAILED';
+        fail(name + ' check failed');
+        res.messages.forEach((msg) => warn(msg));
+      } else {
+        status = 'PASSED';
+        ok(name);
+      }
+    } catch (err) {
+      duration = Date.now() - startTime;
+      allPassed = false;
+      status = 'CRASHED';
+      fail(name + ' check crashed: ' + err.message);
+      console.error(err);
+    }
+    
+    completionTracker.push({ name, status, duration });
+    console.log('');
+  }
+  
+  // Print completion summary
+  console.log('━'.repeat(80));
+  console.log('📊 VALIDATION COMPLETION REPORT\n');
+  
+  const statusCounts = { PASSED: 0, FAILED: 0, CRASHED: 0 };
+  const maxNameLength = Math.max(...completionTracker.map(c => c.name.length));
+  
+  for (const check of completionTracker) {
+    const statusIcon = check.status === 'PASSED' ? '✅' : check.status === 'FAILED' ? '❌' : '💥';
+    const paddedName = check.name.padEnd(maxNameLength);
+    const timeStr = `${(check.duration / 1000).toFixed(2)}s`;
+    console.log(`  ${statusIcon} ${paddedName}  ${check.status.padEnd(8)}  ${timeStr}`);
+    statusCounts[check.status]++;
+  }
+  
+  console.log('');
+  console.log(`Total: ${completionTracker.length} validators`);
+  console.log(`  ✅ Passed: ${statusCounts.PASSED}`);
+  if (statusCounts.FAILED > 0) {
+    console.log(`  ❌ Failed: ${statusCounts.FAILED}`);
+  }
+  if (statusCounts.CRASHED > 0) {
+    console.log(`  💥 Crashed: ${statusCounts.CRASHED}`);
+  }
+  console.log('━'.repeat(80));
+  console.log('');
+  
+  if (!allPassed) {
+    fail('Docs check found issues. See warnings above.');
+    process.exitCode = 1;
+  } else {
+    ok('All docs checks passed.');
+  }
+  
+  // Auto-generate project-specific rules (if generators exist)
+  console.log('');
+  try {
+    // {{GENERATOR_CALLS}}
+    // Example:
+    // await generateAPIRoutes();
+    // await generateFirebaseSchema();
+    // ok('Auto-generated cursor rules updated');
+  } catch (err) {
+    console.error('⚠️  Failed to generate rules:', err.message);
+  }
+}
+
+main();
+
