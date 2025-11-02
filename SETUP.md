@@ -45,7 +45,7 @@ User: /menu
 
 ## ✅ Quick Start Checklist
 
-**Copy-paste this into your terminal or follow step-by-step:**
+**Minimum viable setup (3 steps):**
 
 ```bash
 # 1. Add desloppify submodule
@@ -57,23 +57,51 @@ git submodule update --init --recursive
 mkdir -p .cursor/commands
 cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
 
-# 3. (Optional) Add npm scripts to package.json
-# See "Step 2" below for script examples
-
-# 4. Commit
-git add .gitmodules desloppify .cursor/commands/menu.md
-git commit -m "Add desloppify: quality enforcement + accumulated wisdom"
-
-# 5. Test it works
+# 3. Test it works
 # In Cursor, type: /menu
 ```
 
-**That's it!** You now have:
+**That's the minimum!** You now have:
 - ✅ Access to accumulated wisdom (debug clues, insights, patterns)
 - ✅ Unified `/menu` command (8 workflows in one place)
-- ✅ (Optional) Quality validators when you're ready
 
-**Want validators too?** See Step 2 below for npm script setup.
+---
+
+**Full setup (adds documentation infrastructure):**
+
+After the 3 steps above, add:
+
+```bash
+# 4. (Optional) Install universal conventions
+cp desloppify/cursor-rule-templates/*.mdc .cursor/rules/
+
+# 5. Document your project (AI-guided)
+# Run the interactive setup wizard:
+# Type in Cursor: "Run desloppify setup" or "Document my project"
+# AI will:
+#   - Auto-detect your tech stack
+#   - Interview you about your project
+#   - Create 00-project-context.mdc
+#   - Copy relevant generators
+#   - Create docs-check.js orchestrator
+#   - Set up desloppify-local/ structure
+
+# 6. Test full system
+npm run docs:check
+
+# 7. Commit everything
+git add .
+git commit -m "Add desloppify: full documentation infrastructure"
+```
+
+**Full setup gives you:**
+- ✅ Self-documenting codebase (auto-generated cursor rules)
+- ✅ Quality validators (bug patterns, contracts, style checks)
+- ✅ Deployment playbooks
+- ✅ Session tracking
+- ✅ Project-specific generators
+
+**Want validators only?** See Step 2 below for npm script setup (no setup wizard needed).
 
 ---
 
@@ -213,7 +241,252 @@ AI presents:
 
 ---
 
-## Step 4: How to Use Wisdom in Your Project
+## Step 4: Install Universal Conventions (Optional)
+
+**Purpose:** Copy battle-tested HTML/CSS/JS cursor rules
+
+**Quick Setup:**
+```bash
+# Copy universal conventions to your project
+mkdir -p .cursor/rules
+cp desloppify/cursor-rule-templates/*.mdc .cursor/rules/
+```
+
+**What you get:**
+- `01-html-conventions.mdc` - kebab-case IDs/classes, cross-file consistency
+- `02-css-conventions.mdc` - CSS custom properties, no hardcoded colors
+- `03-javascript-naming.mdc` - camelCase conventions
+- `88-cursor-rule-syntax.mdc` - Meta rule (how to write cursor rules)
+
+**Why install these?**
+These conventions prevent common bugs:
+- HTML/CSS/JS naming mismatches
+- Hardcoded colors breaking themes
+- Duplicate IDs causing selector conflicts
+- Inconsistent naming across files
+
+**Skip if:**
+- You have your own conventions already
+- Not using HTML/CSS/vanilla JS
+- Want to define your own rules first
+
+---
+
+## Step 5: Document Your Project
+
+**Purpose:** Auto-generate cursor rules and set up self-documenting infrastructure
+
+This is the big one! We'll:
+1. Auto-detect your tech stack
+2. Interview you about your project
+3. Create `00-project-context.mdc` (project overview)
+4. Copy relevant generators based on tech stack
+5. Create `docs-check.js` orchestrator
+6. Set up `desloppify-local/` folder structure
+7. Run first validation
+
+### 5.1: Auto-Detect Tech Stack
+
+**AI should scan your project:**
+
+```javascript
+// Scan package.json for dependencies
+const hasDependency = (dep) => /* check package.json */
+
+const techStack = {
+  express: hasDependency('express'),
+  firebase: hasDependency('firebase-admin') || hasDependency('firebase'),
+  react: hasDependency('react'),
+  vue: hasDependency('vue'),
+  typescript: fs.existsSync('tsconfig.json'),
+  // ... etc
+};
+
+// Scan folder structure
+const structure = {
+  hasRoutes: fs.existsSync('routes/'),
+  hasMiddleware: fs.existsSync('middleware/'),
+  hasScripts: fs.existsSync('scripts/'),
+  // ... etc
+};
+```
+
+**Report findings:**
+```
+🔍 Scanning project structure...
+   ✅ Detected: Express (routes/ folder + express in package.json)
+   ✅ Detected: Firebase/Firestore (firebase-admin in package.json)
+   ✅ Detected: ES6 Modules (type: module in package.json)
+   ✅ Detected: 45 scripts in scripts/ directory
+   ⚠️  No TODO.md found
+```
+
+### 5.2: Interview for 00-project-context.mdc
+
+**Conduct interview to populate project context template:**
+
+**See:** `desloppify/templates/cursor-rules/README.md` for full interview flow
+
+**Quick version:**
+1. Project name: _______
+2. What does it do (1 sentence): _______
+3. Project stage (pre-alpha/alpha/beta/production): _______
+4. Tech stack (confirm auto-detected): _______
+5. What features are working: _______
+6. What's in progress: _______
+7. Your role/experience level: _______
+
+**Generate file:**
+```bash
+# AI creates .cursor/rules/00-project-context.mdc from template
+# Replaces all {{PLACEHOLDERS}} with interview answers
+```
+
+### 5.3: Copy Relevant Generators
+
+**Based on detected tech stack, copy generators to `desloppify-local/scripts/`:**
+
+**If Express detected:**
+```bash
+mkdir -p desloppify-local/scripts
+cp desloppify/scripts/modules/express/generate-api-routes-rule.mjs desloppify-local/scripts/
+cp desloppify/scripts/modules/express/generate-middleware-rule.mjs desloppify-local/scripts/
+```
+
+**If Firebase detected:**
+```bash
+cp desloppify/scripts/modules/firebase/generate-schema-rule.mjs desloppify-local/scripts/
+```
+
+**If scripts/ folder detected:**
+```bash
+cp desloppify/scripts/modules/maintenance/generate-scripts-inventory-rule.mjs desloppify-local/scripts/
+```
+
+**If TODO.md detected:**
+```bash
+cp desloppify/scripts/modules/todo-system/validate-todo-contract.mjs desloppify-local/scripts/
+```
+
+**Update paths in copied files:**
+Each generator needs `projectRoot` updated to `path.resolve(__dirname, '../..')` (since they moved to desloppify-local)
+
+### 5.4: Create docs-check.js Orchestrator
+
+**Copy template and customize:**
+```bash
+cp desloppify/templates/scripts/docs-check.js.template scripts/docs-check.js
+```
+
+**AI should auto-populate placeholders based on:**
+- `{{PROJECT_NAME}}` - From interview
+- `{{HTML_FILE}}` - Scan for *.html files
+- `{{JS_FILES}}` - Scan for *.js, *.mjs files
+- `{{GENERATOR_IMPORTS}}` - Based on copied generators
+- `{{GENERATOR_CALLS}}` - Based on copied generators
+
+**Example auto-population for Express + Firebase project:**
+```javascript
+// {{GENERATOR_IMPORTS}} becomes:
+import { generateAPIRoutes } from '../desloppify-local/scripts/generate-api-routes-rule.mjs';
+import { generateMiddleware } from '../desloppify-local/scripts/generate-middleware-rule.mjs';
+import { generateFirebaseSchema } from '../desloppify-local/scripts/generate-schema-rule.mjs';
+
+// {{GENERATOR_CALLS}} becomes:
+await generateAPIRoutes();
+await generateMiddleware();
+await generateFirebaseSchema();
+ok('Auto-generated cursor rules updated');
+```
+
+### 5.5: Create desloppify-local/ Structure
+
+**Copy full structure:**
+```bash
+cp -r desloppify/templates/desloppify-local/ ./desloppify-local/
+
+# Copy config
+cp desloppify/templates/scripts/docs-check.config.json.template desloppify-local/scripts/docs-check.config.json
+
+# Copy sessions templates (if not already present)
+mkdir -p desloppify-local/ledger/sessions
+cp desloppify/templates/sessions/*.md desloppify-local/ledger/sessions/
+```
+
+**Customize config:**
+Update `desloppify-local/scripts/docs-check.config.json` with detected paths
+
+### 5.6: Run First Validation
+
+**Test the setup:**
+```bash
+npm run docs:check
+```
+
+**Expected first run:**
+```
+🔎 YourProject Docs Check
+
+✅ Pre-flight: No interactive code detected
+
+✔️  Function calls validation
+✔️  Null/undefined access
+✔️  Data shape validation
+✔️  Security risks
+✔️  Memory leak risks
+✔️  Return type annotations
+✔️  Error contract annotations
+✔️  Nullability annotations
+✔️  Async boundary annotations
+✔️  Side effects annotations
+✔️  State mutation annotations
+✔️  Dependency annotations
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 VALIDATION COMPLETION REPORT
+
+  ✅ Function calls validation              PASSED    0.25s
+  ✅ Null/undefined access                  PASSED    0.18s
+  ✅ Data shape validation                  PASSED    0.12s
+  ✅ Security risks                         PASSED    0.09s
+  ✅ Memory leak risks                      PASSED    0.11s
+  ✅ Return type annotations                PASSED    0.15s
+  ✅ Error contract annotations             PASSED    0.14s
+  ✅ Nullability annotations                PASSED    0.13s
+  ✅ Async boundary annotations             PASSED    0.12s
+  ✅ Side effects annotations               PASSED    0.11s
+  ✅ State mutation annotations             PASSED    0.10s
+  ✅ Dependency annotations                 PASSED    0.12s
+
+Total: 12 validators
+  ✅ Passed: 12
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✔️  All docs checks passed.
+
+✅ Generated: .cursor/rules/06-api-routes.mdc
+✅ Generated: .cursor/rules/08-middleware-usage.mdc
+✅ Generated: .cursor/rules/07-firestore-schema.mdc
+✔️  Auto-generated cursor rules updated
+```
+
+### 5.7: Commit Setup
+
+```bash
+git add .cursor/rules/ scripts/ desloppify-local/
+git commit -m "Add desloppify documentation infrastructure
+
+- 00-project-context.mdc (project overview)
+- docs-check.js orchestrator
+- Auto-generated rules (API, schema, middleware)
+- desloppify-local/ structure (generators, sessions, deploy)"
+```
+
+**Result:** 🎉 Your project is now self-documenting!
+
+---
+
+## Step 6: How to Use Wisdom in Your Project
 
 ### Reading Debug Clues
 
@@ -269,7 +542,7 @@ AI: "Let me check common Firebase gotchas:
 
 ---
 
-## Step 5: Using the Menu
+## Step 7: Using the Menu
 
 ### Primary Workflow
 
@@ -312,7 +585,7 @@ npm run validate:cursor-rules || exit 1
 
 ---
 
-## Step 6: Contributing New Wisdom
+## Step 8: Contributing New Wisdom
 
 ### Via Menu (Recommended)
 
@@ -480,9 +753,9 @@ When user says "run setup" or "walk me through desloppify setup":
 
 Let's get desloppify set up in your project!
 
-Progress: [ ] [ ] [ ] [ ] [ ]
+Progress: [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 
-Step 1 of 5: Add Submodule
+Step 1 of 7: Add Submodule
 ───────────────────────────
 Status: Checking...
 ```
@@ -532,7 +805,7 @@ ls .cursor/commands/menu.md 2>/dev/null
 **If exists:**
 ```
 ✅ Step 2: Menu Already Exists
-   Progress: [✓] [✓] [ ] [ ] [ ]
+   Progress: [✓] [✓] [ ] [ ] [ ] [ ] [ ]
 ```
 
 **If doesn't exist:**
@@ -545,30 +818,126 @@ cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.m
 ```
 ```
 ✅ Step 2 Complete: Menu created
-   Progress: [✓] [✓] [ ] [ ] [ ]
+   Progress: [✓] [✓] [ ] [ ] [ ] [ ] [ ]
    
    You can now type /menu in Cursor!
 ```
 
 ---
 
-### Step 3: Validators (Optional)
+### Step 3: Universal Conventions (Optional)
 
 **Ask user:**
 ```
-Step 3: Quality Validators
-──────────────────────────
-Do you want to set up code quality validators?
+Step 3: Universal Conventions
+─────────────────────────────
+Install battle-tested HTML/CSS/JS cursor rules?
 
-- Yes: I want validators (style checks, bug detectors, contracts)
-- No: Just wisdom access (skip validators for now)
+These prevent common bugs:
+- HTML/CSS/JS naming mismatches
+- Hardcoded colors
+- Duplicate IDs
+- Inconsistent conventions
+
+Install universal conventions? (y/n)
+```
+
+**If yes:**
+```
+Installing universal conventions...
+```
+```bash
+mkdir -p .cursor/rules
+cp desloppify/cursor-rule-templates/*.mdc .cursor/rules/
+```
+```
+✅ Step 3 Complete: Conventions installed
+   Progress: [✓] [✓] [✓] [ ] [ ] [ ] [ ]
+   
+   Installed:
+   - 01-html-conventions.mdc
+   - 02-css-conventions.mdc
+   - 03-javascript-naming.mdc
+   - 88-cursor-rule-syntax.mdc
+```
+
+**If no:**
+```
+⏭️  Step 3 Skipped: Universal conventions
+   Progress: [✓] [✓] [⏭️] [ ] [ ] [ ] [ ]
+```
+
+---
+
+### Step 4: Document Your Project
+
+**Ask user:**
+```
+Step 4: Document Your Project
+─────────────────────────────
+Set up self-documenting infrastructure?
+
+This will:
+- Auto-detect your tech stack
+- Interview you about your project
+- Create 00-project-context.mdc
+- Copy relevant generators
+- Create docs-check.js orchestrator
+- Set up desloppify-local/ structure
+
+Document your project? (y/n)
+```
+
+**If yes, run the full Step 5 workflow from main setup:**
+- Auto-detect tech stack (scan package.json, folders)
+- Interview for project context (see Step 5.2)
+- Copy generators based on detected tech (see Step 5.3)
+- Create docs-check.js (see Step 5.4)
+- Create desloppify-local/ structure (see Step 5.5)
+- Run first validation (see Step 5.6)
+
+```
+✅ Step 4 Complete: Project documented!
+   Progress: [✓] [✓] [✓/⏭️] [✓] [ ] [ ] [ ]
+   
+   Created:
+   - .cursor/rules/00-project-context.mdc
+   - scripts/docs-check.js
+   - desloppify-local/ (full structure)
+   - Auto-generated rules (API, schema, etc.)
+   
+   Ran first validation: All checks passed ✅
+```
+
+**If no:**
+```
+⏭️  Step 4 Skipped: Documentation infrastructure
+   Progress: [✓] [✓] [✓/⏭️] [⏭️] [ ] [ ] [ ]
+   
+   You can run this later with: "Document my project"
+```
+
+---
+
+### Step 5: Validators (Optional - If Step 4 Skipped)
+
+**Only show if Step 4 was skipped:**
+
+**Ask user:**
+```
+Step 5: Quality Validators (Lightweight)
+─────────────────────────────────────────
+Want to add validators without full documentation setup?
+
+- Yes: Add npm scripts for validators
+- No: Skip (you have /menu and wisdom already)
 
 Your choice? (y/n)
 ```
 
 **If yes:**
 ```
-Setting up validators...
+Adding validator scripts...
 
 1. Create desloppify.config.js? (y/n)
 2. Add npm scripts to package.json? (y/n)
@@ -579,19 +948,19 @@ Setting up validators...
 **If user wants scripts:** Show the npm scripts from Step 2 of main doc
 
 ```
-✅ Step 3 Complete: Validators configured
-   Progress: [✓] [✓] [✓] [ ] [ ]
+✅ Step 5 Complete: Validators configured
+   Progress: [✓] [✓] [✓/⏭️] [⏭️/✓] [✓] [ ] [ ]
 ```
 
 **If no:**
 ```
-⏭️  Step 3 Skipped: Validators (you can add later)
-   Progress: [✓] [✓] [⏭️] [ ] [ ]
+⏭️  Step 5 Skipped: Validators
+   Progress: [✓] [✓] [✓/⏭️] [⏭️] [⏭️] [ ] [ ]
 ```
 
 ---
 
-### Step 4: Commit Setup
+### Step 6: Commit Setup
 
 ```bash
 git status
@@ -602,17 +971,19 @@ Commit desloppify setup? (y/n)
 
 **If yes:**
 ```bash
-git add .gitmodules desloppify .cursor/commands/menu.md
-git commit -m "Add desloppify: quality enforcement + accumulated wisdom"
+# Commit varies based on what was installed
+git add .gitmodules desloppify .cursor/
+git add scripts/ desloppify-local/  # If Step 4 was done
+git commit -m "Add desloppify: [summary of what was installed]"
 ```
 ```
-✅ Step 4 Complete: Changes committed
-   Progress: [✓] [✓] [✓/⏭️] [✓] [ ]
+✅ Step 6 Complete: Changes committed
+   Progress: [✓] [✓] [✓/⏭️] [✓/⏭️] [✓/⏭️] [✓] [ ]
 ```
 
 ---
 
-### Step 5: Test It Works
+### Step 7: Test It Works
 
 ```
 Final Step: Let's test!
@@ -625,20 +996,23 @@ Ready to test? (y/n)
 **If yes:** Present the `/menu` interface from the menu.md template
 
 ```
-✅ Step 5 Complete: Setup verified!
-   Progress: [✓] [✓] [✓/⏭️] [✓] [✓]
+✅ Step 7 Complete: Setup verified!
+   Progress: [✓] [✓] [✓/⏭️] [✓/⏭️] [✓/⏭️] [✓] [✓]
 
 🎉 Desloppify Setup Complete!
 
 You now have:
 ✅ Access to accumulated wisdom
 ✅ Unified /menu command
-✅ Quality validators (optional)
+✅ Universal conventions (if installed)
+✅ Self-documenting infrastructure (if installed)
+✅ Quality validators (if installed)
 
 Next steps:
 - Type /menu to explore
 - Need help? /menu → 5 (Search Wisdom)
 - Run validation? /menu → 1 (Full Maintenance)
+- Document project later? Say "Document my project"
 ```
 
 ---
