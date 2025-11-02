@@ -43,6 +43,40 @@ User: /menu
 
 ---
 
+## ✅ Quick Start Checklist
+
+**Copy-paste this into your terminal or follow step-by-step:**
+
+```bash
+# 1. Add desloppify submodule
+cd your-project-root
+git submodule add https://github.com/Cylon-Skin-Job/desloppify.git desloppify
+git submodule update --init --recursive
+
+# 2. Copy menu command template
+mkdir -p .cursor/commands
+cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
+
+# 3. (Optional) Add npm scripts to package.json
+# See "Step 2" below for script examples
+
+# 4. Commit
+git add .gitmodules desloppify .cursor/commands/menu.md
+git commit -m "Add desloppify: quality enforcement + accumulated wisdom"
+
+# 5. Test it works
+# In Cursor, type: /menu
+```
+
+**That's it!** You now have:
+- ✅ Access to accumulated wisdom (debug clues, insights, patterns)
+- ✅ Unified `/menu` command (8 workflows in one place)
+- ✅ (Optional) Quality validators when you're ready
+
+**Want validators too?** See Step 2 below for npm script setup.
+
+---
+
 ## Step 1: Add Desloppify as Submodule
 
 ```bash
@@ -432,6 +466,180 @@ Remind user:
 - **Pull updates?** `/menu` → option 2 (Sync Desloppify)
 - **Run validators?** `/menu` → option 1 (Full Maintenance)
 - **Deploy?** `/menu` → option 3 (Deploy Workflow)
+
+---
+
+## For AI: Interactive Setup Workflow
+
+When user says "run setup" or "walk me through desloppify setup":
+
+**Present this interactive checklist:**
+
+```
+🛠️  Desloppify Setup Wizard
+
+Let's get desloppify set up in your project!
+
+Progress: [ ] [ ] [ ] [ ] [ ]
+
+Step 1 of 5: Add Submodule
+───────────────────────────
+Status: Checking...
+```
+
+### Step 1: Check & Add Submodule
+
+```bash
+# Check if desloppify exists
+ls desloppify/ 2>/dev/null
+```
+
+**If exists:**
+```
+✅ Step 1: Submodule Already Exists
+   Location: desloppify/
+
+   Verify it has content:
+```
+```bash
+ls desloppify/wisdom/debug/ && ls desloppify/scripts/core/
+```
+
+**If empty:** Run `git submodule update --init --recursive`
+
+**If doesn't exist:**
+```
+Adding desloppify submodule...
+```
+```bash
+git submodule add https://github.com/Cylon-Skin-Job/desloppify.git desloppify
+git submodule update --init --recursive
+```
+```
+✅ Step 1 Complete: Submodule added
+   Progress: [✓] [ ] [ ] [ ] [ ]
+```
+
+---
+
+### Step 2: Copy Menu Template
+
+```bash
+# Check if menu command exists
+ls .cursor/commands/menu.md 2>/dev/null
+```
+
+**If exists:**
+```
+✅ Step 2: Menu Already Exists
+   Progress: [✓] [✓] [ ] [ ] [ ]
+```
+
+**If doesn't exist:**
+```
+Creating menu command...
+```
+```bash
+mkdir -p .cursor/commands
+cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
+```
+```
+✅ Step 2 Complete: Menu created
+   Progress: [✓] [✓] [ ] [ ] [ ]
+   
+   You can now type /menu in Cursor!
+```
+
+---
+
+### Step 3: Validators (Optional)
+
+**Ask user:**
+```
+Step 3: Quality Validators
+──────────────────────────
+Do you want to set up code quality validators?
+
+- Yes: I want validators (style checks, bug detectors, contracts)
+- No: Just wisdom access (skip validators for now)
+
+Your choice? (y/n)
+```
+
+**If yes:**
+```
+Setting up validators...
+
+1. Create desloppify.config.js? (y/n)
+2. Add npm scripts to package.json? (y/n)
+```
+
+**If user wants config:** Show the config template from Step 2 of main doc
+
+**If user wants scripts:** Show the npm scripts from Step 2 of main doc
+
+```
+✅ Step 3 Complete: Validators configured
+   Progress: [✓] [✓] [✓] [ ] [ ]
+```
+
+**If no:**
+```
+⏭️  Step 3 Skipped: Validators (you can add later)
+   Progress: [✓] [✓] [⏭️] [ ] [ ]
+```
+
+---
+
+### Step 4: Commit Setup
+
+```bash
+git status
+```
+```
+Commit desloppify setup? (y/n)
+```
+
+**If yes:**
+```bash
+git add .gitmodules desloppify .cursor/commands/menu.md
+git commit -m "Add desloppify: quality enforcement + accumulated wisdom"
+```
+```
+✅ Step 4 Complete: Changes committed
+   Progress: [✓] [✓] [✓/⏭️] [✓] [ ]
+```
+
+---
+
+### Step 5: Test It Works
+
+```
+Final Step: Let's test!
+
+Type /menu and I'll show you the 8 options available.
+
+Ready to test? (y/n)
+```
+
+**If yes:** Present the `/menu` interface from the menu.md template
+
+```
+✅ Step 5 Complete: Setup verified!
+   Progress: [✓] [✓] [✓/⏭️] [✓] [✓]
+
+🎉 Desloppify Setup Complete!
+
+You now have:
+✅ Access to accumulated wisdom
+✅ Unified /menu command
+✅ Quality validators (optional)
+
+Next steps:
+- Type /menu to explore
+- Need help? /menu → 5 (Search Wisdom)
+- Run validation? /menu → 1 (Full Maintenance)
+```
 
 ---
 
