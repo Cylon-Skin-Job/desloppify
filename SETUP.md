@@ -18,16 +18,28 @@ When you add desloppify to a project, you get:
 
 **Key Insight:** AI can read files directly. Wisdom access is automatic, validation is configurable.
 
-### The 4-Command System
+### The Single Menu Interface
 
-**Primary commands in most projects:**
-1. **`/maintenance`** - Full validation, rule generation, wisdom capture
-2. **`/end-session`** - Quick commit, light checks, wisdom prompts
-3. **`/deploy`** - Deploy workflow with validation check
-4. **`/sync`** - Submodule sync and diff checking
+**One command for everything:**
 
-**Wisdom capture happens automatically** during maintenance and session-end workflows.
-**Validators run on demand** via npm scripts.
+```
+User: /menu
+```
+
+**8 unified workflows:**
+1. 🔍 **Full Maintenance** - Run all validators, generate rules, capture wisdom
+2. 🔄 **Sync Desloppify** - Update submodule, show what's new (wisdom + validators)
+3. 🚀 **Deploy Workflow** - Step-by-step deployment with pre-deploy checks
+4. 📝 **End Session** - Quick commit + session summary (light validation)
+5. 🧠 **Search Wisdom** - Find debug clues, insights, patterns
+6. 📚 **View Project Docs** - Browse project-specific documentation
+7. 📖 **View Sessions** - Read session ledger
+8. ⚡ **Quick Status** - Git status, submodule status, validation summary
+
+**Philosophy:** One menu, everything accessible. Universal code (desloppify submodule) vs project-specific files (desloppify-local folder).
+
+**Wisdom capture happens automatically** during Full Maintenance (option 1) and End Session (option 4).  
+**Validators run on demand** via Full Maintenance or individual npm scripts.
 
 ---
 
@@ -109,144 +121,74 @@ export default {
 
 ---
 
-## Step 3: Integrate into Existing Commands
+## Step 3: Set Up `/menu` Command
 
-### Option A: Update `/maintenance` Command
+### Create the Menu Command
 
-**File:** `.cursor/commands/maintenance.md`
+**File:** `.cursor/commands/menu.md`
 
-**Add these sections to your existing maintenance workflow:**
+Copy the menu command template from `desloppify/templates/cursor-commands/menu.md.template` to your project's `.cursor/commands/menu.md`.
 
-```markdown
-## Step 1.5: Sync Quality + Wisdom Tools
-
-### Pull Latest Desloppify
-```bash
-# Pull latest validators and wisdom
-git submodule update --remote desloppify
-
-# Show what changed
-cd desloppify
-echo "📦 Desloppify Updates:"
-git log -3 --oneline
-
-# Check for new wisdom
-echo ""
-echo "🧠 New Wisdom:"
-git diff HEAD@{1} HEAD --stat wisdom/
-
-cd ..
-```
-
-### Run Validators (if configured)
-```bash
-# Run core validators
-npm run lint:styles
-npm run validate:cursor-rules
-
-# Run bug detectors
-npm run desloppify:bugs
-```
-
-### Wisdom Capture Prompts
-
-**Ask user:**
-- Did you fix any tricky bugs this session?
-- Did you discover any new patterns worth documenting?
-- Any gotchas that took > 30 minutes to solve?
-
-**If yes:**
-- Ask which category: Debug Clues / Insights / Patterns
-- Draft the wisdom entry
-- Commit to `desloppify/wisdom/` subdirectory
-- Push to desloppify repo
-
-**Categories:**
-- **Debug Clues** (`wisdom/debug/`) - Symptom-based checklist for common issues
-- **Insights** (`wisdom/insights/`) - Problem-solving patterns and architecture decisions
-- **Patterns** (`wisdom/patterns/`) - Copy-paste ready code that works across projects
-```
-
-### Option B: Update `/end-session` Command
-
-**File:** `.cursor/commands/session-end.md`
-
-**Add these sections:**
+**Or manually create:**
 
 ```markdown
-## Step 2.5: Sync Desloppify
+# Menu - Unified Desloppify Interface
 
-### Pull Latest
-```bash
-git submodule update --remote desloppify
-cd desloppify && git log -3 --oneline && cd ..
-```
+**Aliases:** `/menu`, `/m`
 
-### Quick Wisdom Check
-
-**Ask user:**
-- Fix any bugs worth documenting?
-- Discover useful patterns?
-
-**If yes:** Brief capture (detailed capture happens in `/maintenance`)
-```
-
-### Option C: Create `/sync` Command
-
-**File:** `.cursor/commands/sync.md`
-
-```markdown
-# Sync Desloppify
-
-**Purpose:** Pull latest validators and wisdom from desloppify.
+**Purpose:** Single command interface for all maintenance, deployment, wisdom, and project management tasks.
 
 ---
 
-## Workflow
+## What This Does
 
-### Step 1: Pull Latest
-```bash
-cd your-project-root
-git submodule update --remote desloppify
-cd desloppify
-git log -5 --oneline --decorate
-cd ..
+When user types `/menu`, present this interactive menu:
+
+🛠️  Desloppify Menu
+
+1. 🔍 Full Maintenance
+   Run all validators, generate rules, capture wisdom
+
+2. 🔄 Sync Desloppify
+   Update submodule, show what's new (wisdom + validators)
+
+3. 🚀 Deploy Workflow
+   Step-by-step deployment from playbook
+
+4. 📝 End Session
+   Quick commit + session summary
+
+5. 🧠 Search Wisdom
+   Find debug clues, insights, patterns
+
+6. 📚 View Project Docs
+   Browse desloppify-local/cursor-docs/
+
+7. 📖 View Sessions
+   Read session ledger
+
+8. ⚡ Quick Status
+   Git status, submodule status, validation summary
+
+What would you like to do? (1-8)
 ```
 
-### Step 2: Show What Changed
-```bash
-# Show new wisdom
-echo "🧠 New Debug Clues:"
-git diff HEAD@{1} HEAD --stat desloppify/wisdom/debug/
+**See full implementation:** [menu.md command reference](https://github.com/Cylon-Skin-Job/desloppify/blob/main/templates/cursor-commands/README.md)
 
-echo "💡 New Insights:"
-git diff HEAD@{1} HEAD --stat desloppify/wisdom/insights/
+### Why One Menu?
 
-echo "📦 New Patterns:"
-git diff HEAD@{1} HEAD --stat desloppify/wisdom/patterns/
+**Old way (separate commands):**
+- `/maintenance` for validation
+- `/end-session` for commits
+- `/deploy` for deployment
+- `/sync` for submodule updates
+- User has to remember 4+ commands
 
-# Show validator updates
-echo "🔧 Validator Updates:"
-git diff HEAD@{1} HEAD --stat desloppify/scripts/
-```
-
-### Step 3: Check for Local Changes
-```bash
-cd desloppify
-if [[ -n $(git status -s) ]]; then
-  echo "⚠️  You have uncommitted changes in desloppify:"
-  git status -s
-  echo "Want to push these?"
-fi
-cd ..
-```
-
-### Step 4: Update Parent Repo
-```bash
-git add desloppify
-git commit -m "Sync desloppify (validators + wisdom)"
-```
-```
+**New way (unified menu):**
+- `/menu` for everything
+- 8 organized options
+- No hunting for commands
+- Clear separation: universal (desloppify) vs local (desloppify-local)
 
 ---
 
@@ -306,24 +248,40 @@ AI: "Let me check common Firebase gotchas:
 
 ---
 
-## Step 5: Running Validators
+## Step 5: Using the Menu
 
-### Run All Validators
-```bash
-npm run desloppify        # Core + contracts + bug patterns
-npm run desloppify:core   # Core validators only
-npm run desloppify:bugs   # Bug pattern detectors only
+### Primary Workflow
+
+```
+User: /menu
+
+AI presents 8 options, user picks one
+
+Menu handles everything:
+- Option 1: Full validation + wisdom capture
+- Option 2: Submodule sync + diff
+- Option 3: Deployment with checks
+- Option 4: Session end + quick validation
+- Option 5: Search wisdom files
+- Option 6: Browse project docs
+- Option 7: View session ledger
+- Option 8: Quick status overview
 ```
 
-### Run Individual Validators
+### Running Validators Directly (Advanced)
+
+For CI/CD or scripting, call validators directly:
+
 ```bash
 npm run lint:styles              # No inline CSS
-npm run lint:ids                 # No duplicate IDs
-npm run validate:colors          # No hardcoded colors
 npm run validate:cursor-rules    # Cursor rule syntax
+npm run desloppify:bugs          # Bug pattern detectors
 ```
 
+**Most users should use `/menu` (option 1) instead.**
+
 ### Pre-Commit Hook (Optional)
+
 Add to `.git/hooks/pre-commit`:
 ```bash
 #!/bin/bash
@@ -335,23 +293,26 @@ npm run validate:cursor-rules || exit 1
 
 ## Step 6: Contributing New Wisdom
 
-### During `/maintenance` or `/end-session`
+### Via Menu (Recommended)
 
-AI will prompt you:
+When you run `/menu` → option 1 (Full Maintenance) or option 4 (End Session), AI will prompt:
+
 ```
 Did you fix any tricky bugs this session?
+Did you discover any new patterns worth documenting?
 ```
 
 If yes, AI will:
-1. Ask about the bug (symptom, fix, why it worked)
-2. Determine category (Debug / Insights / Patterns)
+1. Ask about the bug/pattern (symptom, fix, why it worked)
+2. Determine category (Debug Clues / Insights / Patterns)
 3. Draft the wisdom entry
-4. Commit to desloppify submodule
+4. Commit to `desloppify/wisdom/`
 5. Push to desloppify repo
+6. All your projects benefit!
 
 ### Manual Contribution
 
-If you want to add wisdom outside of commands:
+If you want to add wisdom outside of `/menu`:
 
 ```bash
 cd desloppify/wisdom
@@ -415,10 +376,7 @@ your-project/
 ├── desloppify.config.js      ← Your project's validator config
 └── .cursor/
     └── commands/
-        ├── maintenance.md    (includes wisdom capture + validators)
-        ├── session-end.md    (includes wisdom prompts)
-        ├── sync.md           (submodule sync)
-        └── deploy.md
+        └── menu.md           ← Single unified interface (replaces 4 separate commands)
 ```
 
 ---
@@ -451,15 +409,15 @@ fi
 **If wisdom only:**
 - Skip config, just use wisdom files directly
 
-### 3. Check Command Integration
+### 3. Set Up `/menu` Command
 
-**Ask user:**
-- Do you have `/maintenance` or `/end-session` commands?
-- Want me to add wisdom capture + validator runs?
+**Check if `.cursor/commands/menu.md` exists:**
+- If no: Copy from `desloppify/templates/cursor-commands/menu.md.template`
+- If yes: Confirm it's up to date
 
-**If yes:**
-- Add desloppify sync and capture sections (see Step 3)
-- Create `/sync` command if it doesn't exist
+**One command replaces all others:**
+- Old: `/maintenance`, `/end-session`, `/deploy`, `/sync` (separate commands)
+- New: `/menu` (unified interface with 8 options)
 
 ### 4. Test Access
 
@@ -479,12 +437,14 @@ git submodule update --init --recursive
 ### 5. Quick Usage Guide
 
 Remind user:
+- **Main interface:** Type `/menu` for everything
 - **Debugging?** AI will read `desloppify/wisdom/debug/[category].md` directly
 - **Designing?** AI will reference `desloppify/wisdom/insights/[topic].md`
 - **Coding?** AI will copy from `desloppify/wisdom/patterns/[topic].md`
-- **Fixed a bug?** Wisdom capture happens in `/maintenance` or `/end-session`
-- **Pull updates?** Run `/sync`
-- **Run validators?** Use `npm run desloppify` or individual scripts
+- **Fixed a bug?** Wisdom capture happens in `/menu` → option 1 (Full Maintenance) or option 4 (End Session)
+- **Pull updates?** `/menu` → option 2 (Sync Desloppify)
+- **Run validators?** `/menu` → option 1 (Full Maintenance)
+- **Deploy?** `/menu` → option 3 (Deploy Workflow)
 
 ---
 
@@ -507,9 +467,10 @@ git remote -v  # Check remote is correct
 # Should be: https://github.com/Cylon-Skin-Job/desloppify.git
 ```
 
-### Commands not integrated
-- Check if `.cursor/commands/maintenance.md` exists
-- Add desloppify sync + wisdom capture sections manually (see Step 3)
+### Menu command not working
+- Check if `.cursor/commands/menu.md` exists
+- Copy from `desloppify/templates/cursor-commands/menu.md.template` if missing
+- Ensure AI is loading the command correctly
 
 ---
 
@@ -541,10 +502,14 @@ If your project currently uses the old `cursor-shared-wisdom` submodule:
 **After desloppify v3.0.0:**
 1. Remove `cursor-shared-wisdom` submodule
 2. Add `desloppify` submodule (contains wisdom + validators)
-3. Update command paths: `cursor-shared-wisdom/` → `desloppify/wisdom/`
-4. Optionally configure validators (or ignore, wisdom still works)
+3. Replace separate commands (`/maintenance`, `/end-session`, `/deploy`, `/sync`) with unified `/menu`
+4. Update wisdom paths: `cursor-shared-wisdom/` → `desloppify/wisdom/`
+5. Optionally configure validators (or ignore, wisdom still works)
 
-**See:** [Migration Roadmap](../MERGE_WISDOM_INTO_DESLOPPIFY_ROADMAP.md) for detailed steps.
+**Benefits:**
+- One command instead of four
+- Validators + wisdom in one place
+- Clearer universal vs project-specific separation
 
 ---
 

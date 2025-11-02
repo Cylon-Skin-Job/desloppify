@@ -182,32 +182,39 @@ enforceReturnTypes({
 
 ## 📖 Usage
 
-### Run All Core Validators
+### Primary Interface: `/menu`
 
-```bash
-# Run core + contracts + bug patterns
-npm run desloppify
+**One command for everything:**
 
-# Run everything including modules (based on config)
-npm run desloppify:all
+```
+User: /menu
+
+🛠️  Desloppify Menu
+
+1. 🔍 Full Maintenance - Run all validators, generate rules, capture wisdom
+2. 🔄 Sync Desloppify - Update submodule, show what's new
+3. 🚀 Deploy Workflow - Step-by-step deployment with pre-checks
+4. 📝 End Session - Quick commit + session summary
+5. 🧠 Search Wisdom - Find debug clues, insights, patterns
+6. 📚 View Project Docs - Browse project-specific documentation
+7. 📖 View Sessions - Read session ledger
+8. ⚡ Quick Status - Git status, validation summary
+
+What would you like to do? (1-8)
 ```
 
-### Run By Category
+**Philosophy:** One menu, everything accessible. No hunting for commands.
 
-```bash
-# Core validators only (styles, IDs, colors, cursor rules)
-npm run desloppify:core
+---
 
-# Contract enforcers only
-npm run desloppify:contracts
+### Advanced: Direct npm Scripts
 
-# Bug pattern detectors only
-npm run desloppify:bugs
-```
+For CI/CD or scripting, you can call validators directly:
 
-### Run Individual Validators
+<details>
+<summary>View npm scripts (click to expand)</summary>
 
-**Core:**
+**Core Validators:**
 ```bash
 npm run lint:styles              # No inline CSS
 npm run lint:ids                 # No duplicate IDs
@@ -252,6 +259,10 @@ npm run module:state             # Validate centralized state
 npm run module:todo:validate     # Validate two-way contracts
 npm run module:todo:changes      # Detect uncommitted TODOs
 ```
+
+**Note:** Most users should use `/menu` instead. These scripts are for automation.
+
+</details>
 
 ---
 
