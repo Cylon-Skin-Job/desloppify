@@ -34,14 +34,18 @@ export function checkSetup(projectRoot) {
     }
   };
   
-  // Check 1: Desloppify submodule exists
-  const desloppifyPath = path.join(projectRoot, 'desloppify');
+  // Check 1: Desloppify submodule exists (may be "desloppify" or ".desloppify")
+  let desloppifyPath = path.join(projectRoot, 'desloppify');
   if (!fs.existsSync(desloppifyPath)) {
-    results.errors.push('❌ desloppify/ submodule not found');
-    results.valid = false;
-    return results; // Can't check further without submodule
+    desloppifyPath = path.join(projectRoot, '.desloppify');
+    if (!fs.existsSync(desloppifyPath)) {
+      results.errors.push('❌ desloppify/ submodule not found');
+      results.valid = false;
+      return results; // Can't check further without submodule
+    }
   }
-  results.files.required.push('✅ desloppify/ submodule');
+  const desloppifyDirName = path.basename(desloppifyPath);
+  results.files.required.push(`✅ ${desloppifyDirName}/ submodule`);
   
   // Check 2: Submodule has content
   const wisdomPath = path.join(desloppifyPath, 'wisdom');
