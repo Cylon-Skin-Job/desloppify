@@ -13,7 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Detect if running from inside desloppify submodule (incorrect usage)
-if (__dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts')) {
+if (__dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts') ||
+    __dirname.includes('/.desloppify/scripts') || __dirname.includes('\\.desloppify\\scripts')) {
   console.error('\n❌ ERROR: Cannot run validator directly from desloppify submodule\n');
   console.error('This validator must run via orchestrator to calculate paths correctly.\n');
   console.error('Instead of:  node desloppify/scripts/core/check-async-without-await.mjs');

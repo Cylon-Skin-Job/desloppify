@@ -5,7 +5,10 @@ const path = require('path');
 const fs = require('fs');
 
 // Detect if running from inside desloppify submodule (incorrect usage)
-const isDesloppifyPath = __dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts');
+const isDesloppifyPath = __dirname.includes('/desloppify/scripts') || 
+                         __dirname.includes('\\desloppify\\scripts') ||
+                         __dirname.includes('/.desloppify/scripts') || 
+                         __dirname.includes('\\.desloppify\\scripts');
 if (isDesloppifyPath) {
   console.error('\n❌ ERROR: Cannot run validator directly from desloppify submodule\n');
   console.error('This validator must run via orchestrator to calculate paths correctly.\n');
