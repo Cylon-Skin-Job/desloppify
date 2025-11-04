@@ -1,0 +1,478 @@
+# Command: /setup-desloppify
+
+**Purpose:** Interactive AI-guided desloppify setup with smart project detection
+
+**When to use:** First-time desloppify setup or upgrading from minimal to full setup
+
+---
+
+## What This Command Does
+
+1. **Detects project type** (vanilla, npm, Express, Firebase, etc.)
+2. **Asks clarifying questions** via interactive interview
+3. **Creates TODO list** to track setup progress
+4. **Copies relevant templates** based on project type
+5. **Replaces placeholders** with project-specific values
+6. **Runs validation** to verify setup complete
+7. **Generates setup report**
+
+---
+
+## AI Instructions
+
+When user invokes `/setup-desloppify`:
+
+### Phase 1: Pre-Flight Checks
+
+```javascript
+// 1. Check if desloppify submodule exists
+const desloppifyExists = fs.existsSync('desloppify/');
+
+if (!desloppifyExists) {
+  // Error: Must add submodule first
+  explain("❌ Desloppify submodule not found");
+  explain("Run first:");
+  explain("  git submodule add https://github.com/Cylon-Skin-Job/desloppify.git desloppify");
+  explain("  git submodule update --init --recursive");
+  stop();
+}
+
+// 2. Check if submodule has content
+const wisdomExists = fs.existsSync('desloppify/wisdom/');
+
+if (!wisdomExists) {
+  // Warn: Submodule empty
+  explain("⚠️  Submodule appears empty. Initializing...");
+  runCommand("git submodule update --init --recursive");
+}
+
+// 3. Run setup checker to see current state
+runCommand("node desloppify/scripts/setup-check.mjs");
+// Store results to determine what's already installed
+```
+
+### Phase 2: Create Setup TODO List
+
+```javascript
+// Create TODO list for user to track progress
+createTodos([
+  { id: 'setup-detect', content: 'Detect project type and tech stack', status: 'in_progress' },
+  { id: 'setup-interview', content: 'Interview for project context', status: 'pending' },
+  { id: 'setup-menu', content: 'Install /menu command', status: 'pending' },
+  { id: 'setup-conventions', content: 'Install universal conventions (optional)', status: 'pending' },
+  { id: 'setup-orchestrator', content: 'Install docs-check.js orchestrator', status: 'pending' },
+  { id: 'setup-generators', content: 'Copy project-specific generators', status: 'pending' },
+  { id: 'setup-sessions', content: 'Set up session tracking', status: 'pending' },
+  { id: 'setup-validate', content: 'Run first validation', status: 'pending' },
+  { id: 'setup-commit', content: 'Commit setup files', status: 'pending' }
+]);
+```
+
+### Phase 3: Auto-Detect Project Type
+
+```javascript
+// Run detection script
+runCommand("node desloppify/scripts/detect-project-type.mjs . --json");
+
+// Parse results
+const detection = JSON.parse(output);
+
+// Present findings
+explain("🔍 Project Detection Results:");
+explain(`   Type: ${detection.projectType.toUpperCase()}`);
+explain(`   Has npm: ${detection.hasNpm ? '✅' : '❌'}`);
+
+if (detection.techStack.express) explain("   ✅ Express detected");
+if (detection.techStack.firebase) explain("   ✅ Firebase detected");
+if (detection.techStack.vanilla) explain("   ✅ Vanilla HTML/CSS/JS");
+
+// Mark detection complete
+updateTodo('setup-detect', 'completed');
+updateTodo('setup-interview', 'in_progress');
+```
+
+### Phase 4: Interactive Interview
+
+```javascript
+// Ask user questions to fill 00-project-context.mdc template
+
+const projectName = await ask("What is your project name?");
+const projectDescription = await ask("What does it do (1 sentence)?");
+const projectStage = await ask("Project stage? (pre-alpha/alpha/beta/production)", {
+  default: "pre-alpha"
+});
+
+// Confirm auto-detected tech stack
+const confirmedStack = await ask(
+  `Detected tech stack: ${detection.techStack}. Is this correct? (y/n)`,
+  { default: "y" }
+);
+
+if (confirmedStack === 'n') {
+  // Manual override
+  const manualStack = await ask("Please list your tech stack (comma-separated):");
+  // Parse and update detection
+}
+
+// Ask about features
+const workingFeatures = await ask("What features are working?");
+const inProgressFeatures = await ask("What's in progress?");
+
+// Ask about user
+const userRole = await ask("Your role/experience level?", {
+  default: "Solo developer"
+});
+
+// Mark interview complete
+updateTodo('setup-interview', 'completed');
+```
+
+### Phase 5: Choose Setup Level
+
+```javascript
+updateTodo('setup-menu', 'in_progress');
+
+const setupLevel = await ask(`
+Choose setup level:
+1) MINIMAL - Wisdom access only (no validators)
+2) STANDARD - Wisdom + validators (recommended for npm)
+3) FULL - Complete infrastructure (docs, generators, validators)
+
+Your choice? (1/2/3)
+`, { default: detection.hasNpm ? "2" : "1" });
+
+// Execute setup based on choice
+```
+
+### Phase 6: Execute Setup (Minimal)
+
+If user chose MINIMAL:
+
+```javascript
+// Copy menu command
+copyFile(
+  'desloppify/templates/cursor-commands/menu.md.template',
+  '.cursor/commands/menu.md'
+);
+
+explain("✅ Copied /menu command");
+updateTodo('setup-menu', 'completed');
+
+// Skip optional todos
+updateTodo('setup-conventions', 'cancelled');
+updateTodo('setup-orchestrator', 'cancelled');
+updateTodo('setup-generators', 'cancelled');
+updateTodo('setup-sessions', 'cancelled');
+
+explain("✅ MINIMAL setup complete!");
+explain("You can now type /menu in Cursor");
+```
+
+### Phase 7: Execute Setup (Standard)
+
+If user chose STANDARD:
+
+```javascript
+// 1. Menu command (from MINIMAL)
+copyFile(
+  'desloppify/templates/cursor-commands/menu.md.template',
+  '.cursor/commands/menu.md'
+);
+updateTodo('setup-menu', 'completed');
+updateTodo('setup-orchestrator', 'in_progress');
+
+// 2. Orchestrator
+const orchestratorTemplate = readFile('desloppify/templates/scripts/docs-check.js.template');
+
+// Replace placeholders
+const orchestrator = orchestratorTemplate
+  .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
+  .replace(/\{\{HTML_FILE\}\}/g, detection.structure.htmlFiles[0] || 'index.html')
+  .replace(/\{\{JS_FILES\}\}/g, JSON.stringify(detection.structure.jsFiles));
+
+// Add generator imports based on detected tech
+let generatorImports = '';
+let generatorCalls = '';
+
+if (detection.techStack.express) {
+  generatorImports += `import { generateAPIRoutes } from '../desloppify-local/scripts/generate-api-routes-rule.mjs';\n`;
+  generatorCalls += `await generateAPIRoutes();\n`;
+}
+
+if (detection.techStack.firebase) {
+  generatorImports += `import { generateSchema } from '../desloppify-local/scripts/generate-schema-rule.mjs';\n`;
+  generatorCalls += `await generateSchema();\n`;
+}
+
+const finalOrchestrator = orchestrator
+  .replace(/\{\{GENERATOR_IMPORTS\}\}/g, generatorImports)
+  .replace(/\{\{GENERATOR_CALLS\}\}/g, generatorCalls);
+
+writeFile('scripts/docs-check.js', finalOrchestrator);
+updateTodo('setup-orchestrator', 'completed');
+
+// 3. Session templates
+updateTodo('setup-sessions', 'in_progress');
+copyDir(
+  'desloppify/templates/sessions/',
+  'desloppify-local/ledger/sessions/'
+);
+updateTodo('setup-sessions', 'completed');
+
+// 4. Config
+const config = {
+  core: {
+    lintStyles: true,
+    lintDuplicateIds: true,
+    validateColors: true,
+    cursorRules: true
+  },
+  paths: {
+    htmlFile: detection.structure.htmlFiles[0] || 'index.html',
+    jsFiles: detection.structure.jsFiles,
+    cssFiles: detection.structure.cssFiles
+  }
+};
+
+writeFile(
+  'desloppify-local/scripts/docs-check.config.json',
+  JSON.stringify(config, null, 2)
+);
+
+explain("✅ STANDARD setup complete!");
+```
+
+### Phase 8: Execute Setup (Full)
+
+If user chose FULL:
+
+```javascript
+// Run STANDARD setup first
+// ... (all steps from Standard)
+
+updateTodo('setup-conventions', 'in_progress');
+
+// Ask about universal conventions
+const wantsConventions = await ask(
+  "Install universal HTML/CSS/JS conventions? (y/n)",
+  { default: "y" }
+);
+
+if (wantsConventions === 'y') {
+  copyDir(
+    'desloppify/cursor-rule-templates/',
+    '.cursor/rules/'
+  );
+  explain("✅ Installed universal conventions");
+}
+
+updateTodo('setup-conventions', 'completed');
+updateTodo('setup-generators', 'in_progress');
+
+// Copy project-specific generators
+if (detection.techStack.express) {
+  copyFile(
+    'desloppify/scripts/modules/express/generate-api-routes-rule.mjs',
+    'desloppify-local/scripts/generate-api-routes-rule.mjs'
+  );
+  
+  copyFile(
+    'desloppify/scripts/modules/express/generate-middleware-rule.mjs',
+    'desloppify-local/scripts/generate-middleware-rule.mjs'
+  );
+  
+  explain("✅ Copied Express generators");
+}
+
+if (detection.techStack.firebase) {
+  copyFile(
+    'desloppify/scripts/modules/firebase/generate-schema-rule.mjs',
+    'desloppify-local/scripts/generate-schema-rule.mjs'
+  );
+  
+  explain("✅ Copied Firebase generator");
+}
+
+updateTodo('setup-generators', 'completed');
+
+// Create 00-project-context.mdc from interview
+const projectContextTemplate = readFile('desloppify/templates/cursor-rules/00-project-context.mdc.template');
+
+const projectContext = projectContextTemplate
+  .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
+  .replace(/\{\{PROJECT_DESCRIPTION\}\}/g, projectDescription)
+  .replace(/\{\{PROJECT_STAGE\}\}/g, projectStage)
+  .replace(/\{\{TECH_STACK\}\}/g, JSON.stringify(detection.techStack, null, 2))
+  .replace(/\{\{WORKING_FEATURES\}\}/g, workingFeatures)
+  .replace(/\{\{IN_PROGRESS_FEATURES\}\}/g, inProgressFeatures)
+  .replace(/\{\{USER_ROLE\}\}/g, userRole);
+
+writeFile('.cursor/rules/00-project-context.mdc', projectContext);
+
+explain("✅ Created project context rule");
+explain("✅ FULL setup complete!");
+```
+
+### Phase 9: Validate Setup
+
+```javascript
+updateTodo('setup-validate', 'in_progress');
+
+// Run setup checker
+runCommand("node desloppify/scripts/setup-check.mjs");
+
+// If npm project, run first validation
+if (detection.hasNpm) {
+  explain("Running first validation...");
+  runCommand("node scripts/docs-check.js");
+}
+
+updateTodo('setup-validate', 'completed');
+```
+
+### Phase 10: Commit Setup
+
+```javascript
+updateTodo('setup-commit', 'in_progress');
+
+const shouldCommit = await ask("Commit setup files? (y/n)", { default: "y" });
+
+if (shouldCommit === 'y') {
+  runCommand("git add .cursor/ scripts/ desloppify-local/");
+  
+  const commitMessage = `Add desloppify: ${setupLevel} setup
+
+- ${setupLevel === '1' ? 'Minimal' : setupLevel === '2' ? 'Standard' : 'Full'} setup
+- Project: ${projectName}
+- Type: ${detection.projectType}
+- Detected: ${Object.keys(detection.techStack).filter(k => detection.techStack[k]).join(', ')}`;
+  
+  runCommand(`git commit -m "${commitMessage}"`);
+  
+  explain("✅ Setup committed");
+}
+
+updateTodo('setup-commit', 'completed');
+```
+
+### Phase 11: Generate Setup Report
+
+```javascript
+// Create summary
+const summary = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅ Desloppify Setup Complete!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 Setup Level: ${setupLevel.toUpperCase()}
+
+🔍 Project Detection:
+   - Type: ${detection.projectType}
+   - Tech Stack: ${Object.keys(detection.techStack).filter(k => detection.techStack[k]).join(', ')}
+
+📁 Files Installed:
+   ✅ .cursor/commands/menu.md
+   ${setupLevel >= 2 ? '✅ scripts/docs-check.js' : ''}
+   ${setupLevel >= 2 ? '✅ desloppify-local/scripts/docs-check.config.json' : ''}
+   ${setupLevel >= 2 ? '✅ desloppify-local/ledger/sessions/' : ''}
+   ${setupLevel >= 3 ? '✅ .cursor/rules/00-project-context.mdc' : ''}
+   ${setupLevel >= 3 ? '✅ Project-specific generators' : ''}
+
+🎯 Next Steps:
+   1. Type /menu in Cursor
+   2. Explore: /menu → 5 (Search Wisdom)
+   ${setupLevel >= 2 ? '3. Run validation: npm run docs:check' : ''}
+   ${setupLevel >= 2 ? '4. Start session: /menu → 4 (End Session to create first log)' : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+
+explain(summary);
+
+// Clear TODO list
+clearTodos();
+```
+
+---
+
+## Error Handling
+
+If any step fails:
+
+```javascript
+try {
+  // Step logic
+} catch (error) {
+  explain(`❌ Error during ${currentStep}: ${error.message}`);
+  explain("Setup incomplete. Fix error and run /setup-desloppify again");
+  
+  // Mark current todo as failed
+  updateTodo(currentTodoId, 'cancelled');
+  
+  // Show recovery instructions
+  explain("\n🔧 Troubleshooting:");
+  
+  if (error.message.includes('ENOENT')) {
+    explain("   - File/folder missing. Check paths.");
+  }
+  
+  if (error.message.includes('permission')) {
+    explain("   - Permission denied. Check file permissions.");
+  }
+  
+  stop();
+}
+```
+
+---
+
+## Quick Setup (No Interview)
+
+For users who want fast setup without questions:
+
+```bash
+# Minimal (wisdom only)
+bash desloppify/setup.sh
+
+# Or in Cursor:
+/setup-desloppify --quick --level=minimal
+```
+
+AI should detect `--quick` flag and skip interview, use detection defaults only.
+
+---
+
+## Validation After Setup
+
+Always run setup checker at the end:
+
+```javascript
+const validation = runCommand("node desloppify/scripts/setup-check.mjs");
+
+if (validation.exitCode !== 0) {
+  explain("⚠️  Setup validation found issues. Check output above.");
+} else {
+  explain("✅ Setup validation passed!");
+}
+```
+
+---
+
+## Philosophy
+
+**One command to rule them all.**
+
+User says `/setup-desloppify`, AI:
+1. Detects project
+2. Asks smart questions
+3. Copies only what's needed
+4. Validates it worked
+5. Reports success
+
+**No manual template copying. No hunting for files. No missed steps.**
+
+---
+
+**Template Version:** 1.0  
+**Last Updated:** 2025-11-04
+
