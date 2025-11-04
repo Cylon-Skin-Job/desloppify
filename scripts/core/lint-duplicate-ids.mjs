@@ -17,6 +17,17 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Detect if running from inside desloppify submodule (incorrect usage)
+if (__dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts')) {
+  console.error('\n❌ ERROR: Cannot run validator directly from desloppify submodule\n');
+  console.error('This validator must run via orchestrator to calculate paths correctly.\n');
+  console.error('Instead of:  node desloppify/scripts/core/lint-duplicate-ids.mjs');
+  console.error('Use:         npm run docs:check\n');
+  console.error('Or set up orchestrator:  bash desloppify/setup.sh\n');
+  process.exit(1);
+}
+
 const repoRoot = path.join(__dirname, '..');
 
 // Patterns to match IDs in different contexts

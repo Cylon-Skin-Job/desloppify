@@ -4,6 +4,17 @@ const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// Detect if running from inside desloppify submodule (incorrect usage)
+const isDesloppifyPath = __dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts');
+if (isDesloppifyPath) {
+  console.error('\n❌ ERROR: Cannot run validator directly from desloppify submodule\n');
+  console.error('This validator must run via orchestrator to calculate paths correctly.\n');
+  console.error('Instead of:  node desloppify/scripts/core/lint-styles.cjs');
+  console.error('Use:         npm run docs:check\n');
+  console.error('Or set up orchestrator:  bash desloppify/setup.sh\n');
+  process.exit(1);
+}
+
 const repoRoot = path.join(__dirname, '..');
 
 function runRipGrep() {

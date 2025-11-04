@@ -7,10 +7,21 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import whitelistManager from './whitelist-manager.mjs';
+import whitelistManager from '../whitelist-manager.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Detect if running from inside desloppify submodule (incorrect usage)
+if (__dirname.includes('/desloppify/scripts') || __dirname.includes('\\desloppify\\scripts')) {
+  console.error('\n❌ ERROR: Cannot run validator directly from desloppify submodule\n');
+  console.error('This validator must run via orchestrator to calculate paths correctly.\n');
+  console.error('Instead of:  node desloppify/scripts/core/check-async-without-await.mjs');
+  console.error('Use:         npm run docs:check\n');
+  console.error('Or set up orchestrator:  bash desloppify/setup.sh\n');
+  process.exit(1);
+}
+
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 const FILES_TO_SKIP = [
