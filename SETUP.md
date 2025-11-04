@@ -105,6 +105,74 @@ git commit -m "Add desloppify: full documentation infrastructure"
 
 ---
 
+## 🎨 Vanilla Mode: Pure HTML/CSS/JS Projects (No npm)
+
+**If your project has NO `package.json`** (pure HTML/CSS/JS), use **Minimal Setup**:
+
+### Quick Vanilla Setup
+
+```bash
+# 1. Add desloppify submodule
+cd your-project-root
+git submodule add https://github.com/Cylon-Skin-Job/desloppify.git desloppify
+git submodule update --init --recursive
+
+# 2. Run setup wizard (chooses MINIMAL automatically for vanilla projects)
+bash desloppify/setup.sh
+
+# Or manually copy menu:
+mkdir -p .cursor/commands
+cp desloppify/templates/cursor-commands/menu.md.template .cursor/commands/menu.md
+
+# 3. Test
+# In Cursor: /menu
+```
+
+### What You Get (Vanilla Mode)
+
+✅ **Wisdom Access**
+- Full access to debug clues, insights, patterns
+- AI reads `desloppify/wisdom/` directly
+- No npm required
+
+✅ **Unified Menu**
+- `/menu` command works
+- Options 2, 5, 6, 7, 8 available
+- Option 1 (Full Maintenance) requires npm
+
+❌ **No Validators** (requires Node.js/npm)
+- Can't run automated validation
+- No `docs:check` script
+- Wisdom only
+
+### Adding npm Later (Optional)
+
+If you want validators, add `package.json`:
+
+```bash
+npm init -y
+
+# Add desloppify scripts
+# See Step 2 below for package.json scripts
+```
+
+Then re-run setup:
+```bash
+bash desloppify/setup.sh
+# Choose STANDARD setup this time
+```
+
+### Why Vanilla Mode Exists
+
+Not every project needs a build system. Pure HTML/CSS/JS projects benefit from:
+- ✅ Debug wisdom (Firebase gotchas, CSS bugs, JS patterns)
+- ✅ Accumulated learnings from other projects
+- ✅ Unified `/menu` for project management
+
+Validators are **optional**—wisdom is **universal**.
+
+---
+
 ## Step 1: Add Desloppify as Submodule
 
 ```bash
