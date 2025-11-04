@@ -17,7 +17,15 @@ NC='\033[0m' # No Color
 
 # Project root (where setup.sh was called from)
 PROJECT_ROOT="$(pwd)"
-DESLOPPIFY_DIR="${PROJECT_ROOT}/desloppify"
+
+# Detect desloppify directory (may be "desloppify" or ".desloppify")
+if [ -d "${PROJECT_ROOT}/desloppify" ]; then
+  DESLOPPIFY_DIR="${PROJECT_ROOT}/desloppify"
+elif [ -d "${PROJECT_ROOT}/.desloppify" ]; then
+  DESLOPPIFY_DIR="${PROJECT_ROOT}/.desloppify"
+else
+  DESLOPPIFY_DIR=""
+fi
 
 echo -e "${BLUE}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -29,7 +37,7 @@ echo -e "${NC}"
 
 echo -e "${YELLOW}Step 1: Checking desloppify submodule...${NC}"
 
-if [ ! -d "$DESLOPPIFY_DIR" ]; then
+if [ -z "$DESLOPPIFY_DIR" ]; then
   echo -e "${RED}❌ Error: desloppify/ submodule not found${NC}"
   echo ""
   echo "Please run from project root after adding submodule:"
