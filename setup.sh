@@ -59,8 +59,9 @@ echo -e "${GREEN}✅ Desloppify submodule found${NC}"
 echo ""
 echo -e "${YELLOW}Step 2: Detecting project type...${NC}"
 
-# Run detection script
-DETECTION_JSON=$(node "$DESLOPPIFY_DIR/scripts/detect-project-type.mjs" "$PROJECT_ROOT" --json 2>/dev/null | tail -n +2)
+# Run detection script and extract JSON only (grep from opening brace to closing brace)
+DETECTION_OUTPUT=$(node "$DESLOPPIFY_DIR/scripts/detect-project-type.mjs" "$PROJECT_ROOT" --json 2>/dev/null)
+DETECTION_JSON=$(echo "$DETECTION_OUTPUT" | sed -n '/^{/,/^}$/p')
 
 # Parse JSON (requires jq, but fall back to manual detection if not available)
 if command -v jq &> /dev/null; then
